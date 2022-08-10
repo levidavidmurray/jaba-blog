@@ -1,0 +1,21 @@
+{
+  "i18n-ally.localesPaths": [
+    "./locales"
+  ],
+  "i18n-ally.enabledParsers": [
+    "json"
+  ],
+  "editor.tabCompletion": "on",
+  "emmet.triggerExpansionOnTab": true,
+  "emmet.showAbbreviationSuggestions": true,
+  "emmet.showExpandedAbbreviation": "always",
+  "emmet.includeLanguages": {
+    "vue-html": "html",
+    "vue": "html"
+  },
+  "emmet.syntaxProfiles": {
+    "vue-html": "html",
+    "vue": "html"
+  },
+  "iconify.inplace": false
+}
