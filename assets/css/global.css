@@ -1,0 +1,26 @@
+body {
+    /* Light */
+    @apply bg-neutral-50 text-neutral-900;
+
+    /* Dark */
+    @apply dark:bg-neutral-900 dark:text-neutral-200;
+}
+
+button {
+    /* Default */
+    @apply w-full h-10 rounded-md;
+
+    /* Light */
+    @apply font-light text-neutral-50 bg-neutral-900;
+
+    /* Dark */
+    @apply dark:font-medium dark:text-neutral-900 dark:bg-neutral-400 ;
+}
+
+input {
+    @apply bg-transparent;
+}
+
+svg {
+    display: inline;
+}

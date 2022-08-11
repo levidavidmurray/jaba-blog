@@ -9,7 +9,7 @@ export class Article {
     title: string
     subtitle: string
     summary?: string
-    content?: string
+    body?: string
     slug: string
     publishedAt: Dayjs
     publishedAtDisplay: string
@@ -24,6 +24,7 @@ export class Article {
         this.title = attributes.title
         this.subtitle = attributes.subtitle
         this.summary = attributes.summary
+        this.body = attributes.body;
         this.slug = attributes.slug
         this.publishedAt = dayjs(attributes.publishedAt)
         this.publishedAtDisplay = Article.getPublishedAtDisplay(

@@ -1,59 +1,128 @@
 <template>
-    <editor-content :editor="editor" />
+    <div>
+        <editor-content :editor="titleEditor" />
+        <editor-content :editor="editor" />
+    </div>
 </template>
 
 <script lang="ts" setup>
+    import { Article } from '@/types/models/article'
     import { Editor, EditorContent } from '@tiptap/vue-3'
     import StarterKit from '@tiptap/starter-kit'
     import Image from '@tiptap/extension-image'
     import Link from '@tiptap/extension-link'
     import Typography from '@tiptap/extension-typography'
+    import Placeholder from '@tiptap/extension-placeholder'
+    import Document from '@tiptap/extension-document'
+    import Heading from '@tiptap/extension-heading'
+    import Text from '@tiptap/extension-text'
 
     const emit = defineEmits(['update'])
 
-    const editor = new Editor({
-        onUpdate({ editor }) {
-            emit('update', editor.getHTML())
+    const { article } = defineProps<{ article?: Article }>();
+
+    const titleEditor = new Editor({
+        editorProps: {
+            attributes: {
+                class: 'article-title',
+            },
         },
-        content: `
-            <h1>Hello There!</h1><h2>Hello There!</h2><h3>Hello There!</h3><h4>Hello There!</h4><h5>Hello There!</h5><h6>Hello There!</h6><p></p><p><a target="_blank" rel="noopener noreferrer nofollow" href="https://tiptap.dev/api/marks/link">https://tiptap.dev/api/marks/link</a></p><p></p><p>Tiptap with Vue.js! Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris ultrices, nulla vel accumsan auctor, nibh mauris consectetur elit, non facilisis turpis enim et ipsum. Aliquam mauris nulla, luctus et augue quis, scelerisque facilisis velit. Donec laoreet erat ut libero ultrices mattis ut quis ligula. Etiam id congue nibh, sit amet commodo nisi. Mauris dapibus, sem eu lobortis pretium, orci nunc congue diam, quis pulvinar lacus quam eget lectus. Duis mattis non sapien non fringilla. Nunc consectetur cursus odio, id tincidunt erat molestie ac. Duis laoreet luctus commodo. In orci metus, viverra ornare mattis sit amet, facilisis ut mi. Ut arcu magna, condimentum blandit luctus ut, dapibus quis sapien. Nunc luctus ligula nec neque dictum, at fermentum odio auctor. Etiam molestie maximus justo sed interdum. Aenean non felis a orci tempor euismod suscipit ut purus. Sed semper dolor eget odio faucibus, non tincidunt magna aliquet. Vestibulum ultrices risus fringilla sapien placerat eleifend.</p>
-            &nbsp;
-            <p>Tiptap with Vue.js!</p>
-            <p></p>
-            <img src="https://source.unsplash.com/8xznAGy4HcY/800x400" />
-            `,
+        onUpdate: () => onUpdate(),
+        content: article ? article.title : '',
+        extensions: [
+            Document,
+            Text,
+            Heading.configure({ levels: [1] }),
+            Placeholder.configure({ placeholder: 'Untitled Article' })
+        ],
+        autofocus: !Boolean(article),
+    })
+
+    const editor = new Editor({
+        editorProps: {
+            attributes: {
+                class: 'article-body'
+            },
+        },
+        onUpdate: () => onUpdate(),
+        content: article ? article.body : '',
         extensions: [
             StarterKit,
             Image,
             Link,
             Typography,
+            Placeholder.configure({
+                placeholder: 'Write something...'
+            })
         ],
+        autofocus: Boolean(article),
     })
+
+    const onUpdate = () => {
+        emit('update', {
+            body: editor.getHTML(),
+            title: titleEditor.getText(),
+        });
+    };
+
+    onUpdate();
 
 </script>
 
 <style lang="scss">
+
 .ProseMirror {
-    @apply p-4;
+    @apply p-4 outline-none;
+}
 
+.ProseMirror.article-title {
     h1 {
-        @apply text-6xl font-extrabold;
-    }
-
-    h2 {
-        @apply text-5xl font-extrabold;
-    }
-
-    h3 {
         @apply text-4xl font-extrabold;
     }
 
+    h1.is-editor-empty:first-child::before {
+        content: attr(data-placeholder);
+        float: left;
+        color: #adb5bd;
+        pointer-events: none;
+        height: 0;
+    }
+}
+
+.ProseMirror.article-body {
+
+    min-height: 512px;
+
+    p.is-editor-empty:first-child::before {
+        content: attr(data-placeholder);
+        float: left;
+        color: #adb5bd;
+        pointer-events: none;
+        height: 0;
+    }
+
+    p {
+        @apply leading-relaxed mt-4;
+    }
+
+    h1 {
+        @apply text-xl font-extrabold mt-6;
+    }
+
+    h2 {
+        @apply text-xl font-extrabold;
+    }
+
+    h3 {
+        @apply text-xl font-extrabold;
+    }
+
     h4 {
-        @apply text-3xl font-extrabold;
+        @apply text-xl font-extrabold;
     }
 
     h5 {
-        @apply text-2xl font-extrabold;
+        @apply text-xl font-extrabold;
     }
 
     h6 {

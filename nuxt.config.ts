@@ -10,6 +10,7 @@ export default defineNuxtConfig({
       { rel: 'stylesheet', href: 'https://rsms.me/inter/inter.css' },
     ]
   },
+  css: ['assets/css/global.css'],
   modules: ['@nuxtjs/strapi'],
   buildModules: [
     'nuxt-windicss',
