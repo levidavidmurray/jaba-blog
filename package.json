@@ -10,7 +10,7 @@
     "updateall": "yarn upgrade-interactive --latest"
   },
   "devDependencies": {
-    "@iconify/json": "^2.1.10",
+    "@iconify/json": "^2.1.89",
     "@intlify/nuxt3": "^0.2.3",
     "@nuxtjs/strapi": "^1.5.0",
     "@pinia/nuxt": "^0.3.1",
@@ -22,7 +22,7 @@
     "nuxt-windicss": "latest",
     "sass": "^1.54.4",
     "sass-loader": "10",
-    "unplugin-icons": "^0.13.2",
+    "unplugin-icons": "^0.14.8",
     "unplugin-vue-components": "^0.17.21"
   },
   "dependencies": {

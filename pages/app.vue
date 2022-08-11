@@ -122,7 +122,7 @@
   </div>
 
   <div class="absolute left-0 bottom-0 flex items-center justify-center w-full mb-4 text-primary">
-    Powered By <simple-icons:4chan class="h-4 w-4 mx-2" /> NuxtJS
+    Powered By <simple-icons:1password class="h-4 w-4 mx-2" /> NuxtJS
   </div>
 </template>
 

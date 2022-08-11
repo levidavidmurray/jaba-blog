@@ -4,7 +4,7 @@
 
             <div class="admin-actions">
                 <nuxt-link :to="editLink">
-                    <icon-material-edit class="text-neutral-400 hover:text-neutral-800 dark:hover:text-neutral-200" />
+                    <material-symbols:edit class="text-neutral-400 hover:text-neutral-800 dark:hover:text-neutral-200" />
                 </nuxt-link>
             </div>
 
@@ -22,7 +22,6 @@
 <script lang="ts" setup>
 import { ArticleDto } from '~~/types/api';
 import { Article } from '~~/types/models/article';
-import IconMaterialEdit from '~icons/material-symbols/edit'
 import { Ref } from 'vue';
 
 // definePageMeta({

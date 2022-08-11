@@ -8,7 +8,7 @@
 
                 <div v-if="article" class="admin-actions">
                     <button @click="onDelete">
-                        <icon-trash class="text-2xl text-neutral-400 hover:text-red-600 active:text-red-800" />
+                        <material-symbols:delete class="text-2xl text-neutral-400 hover:text-red-600 active:text-red-800" />
                     </button>
                 </div>
             </div>
@@ -19,7 +19,6 @@
 <script lang="ts" setup>
 import { ArticleDto } from '~~/types/api';
 import { Article } from '~~/types/models/article';
-import IconTrash from '~icons/material-symbols/delete'
 
 const { $strapi } = useNuxtApp()
 

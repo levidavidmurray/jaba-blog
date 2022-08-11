@@ -9,7 +9,14 @@ declare module 'vue' {
     'Carbon:logoTwitter': typeof import('~icons/carbon/logo-twitter')['default']
     'Carbon:moon': typeof import('~icons/carbon/moon')['default']
     'Carbon:sun': typeof import('~icons/carbon/sun')['default']
+    'MaterialSymbols:arrowBackIosNew': typeof import('~icons/material-symbols/arrow-back-ios-new')['default']
+    'MaterialSymbols:delete': typeof import('~icons/material-symbols/delete')['default']
+    'MaterialSymbols:edit': typeof import('~icons/material-symbols/edit')['default']
+    'Mdi:trashCan': typeof import('~icons/mdi/trash-can')['default']
+    'Ri:deleteBin6Fill': typeof import('~icons/ri/delete-bin6-fill')['default']
+    'SimpleIcons:1password': typeof import('~icons/simple-icons/1password')['default']
     'SimpleIcons:4chan': typeof import('~icons/simple-icons/4chan')['default']
+    'SimpleIcons:adblock': typeof import('~icons/simple-icons/adblock')['default']
     'SimpleIcons:nuxtdotjs': typeof import('~icons/simple-icons/nuxtdotjs')['default']
   }
 }
