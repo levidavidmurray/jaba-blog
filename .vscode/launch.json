@@ -1,0 +1,20 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+        "command": "yarn dev",
+        "name": "Run yarn dev",
+        "request": "launch",
+        "type": "node-terminal"
+    },
+
+    {
+      "name": "Run and debug",
+      "type": "node",
+      "request": "launch",
+      "cwd": "${workspaceFolder}",
+      "runtimeExecutable": "yarn",
+      "runtimeArgs": ["dev"]
+    }
+  ]
+}

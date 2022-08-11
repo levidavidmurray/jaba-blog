@@ -1,6 +1,5 @@
 <template>
     <div>
-        <editor-content :editor="titleEditor" />
         <editor-content :editor="editor" />
     </div>
 </template>
@@ -14,55 +13,43 @@
     import Typography from '@tiptap/extension-typography'
     import Placeholder from '@tiptap/extension-placeholder'
     import Document from '@tiptap/extension-document'
-    import Heading from '@tiptap/extension-heading'
-    import Text from '@tiptap/extension-text'
 
     const emit = defineEmits(['update'])
 
     const { article } = defineProps<{ article?: Article }>();
 
-    const titleEditor = new Editor({
-        editorProps: {
-            attributes: {
-                class: 'article-title',
-            },
-        },
-        onUpdate: () => onUpdate(),
-        content: article ? article.title : '',
-        extensions: [
-            Document,
-            Text,
-            Heading.configure({ levels: [1] }),
-            Placeholder.configure({ placeholder: 'Untitled Article' })
-        ],
-        autofocus: !Boolean(article),
+    const CustomDocument = Document.extend({
+        content: 'heading block*'
     })
 
     const editor = new Editor({
         editorProps: {
             attributes: {
-                class: 'article-body'
+                class: 'article'
             },
         },
         onUpdate: () => onUpdate(),
-        content: article ? article.body : '',
+        content: article ? article.getEditBody() : '',
         extensions: [
-            StarterKit,
+            CustomDocument,
+            StarterKit.configure({ document: false }),
             Image,
             Link,
             Typography,
             Placeholder.configure({
-                placeholder: 'Write something...'
+                placeholder: ({ node }) => {
+                    if (node.type.name === 'heading') return "What's the title?"
+                    console.log(node)
+
+                    return "What's on your mind?"
+                }
             })
         ],
-        autofocus: Boolean(article),
+        autofocus: true,
     })
 
     const onUpdate = () => {
-        emit('update', {
-            body: editor.getHTML(),
-            title: titleEditor.getText(),
-        });
+        emit('update', editor.getHTML());
     };
 
     onUpdate();
@@ -72,61 +59,34 @@
 <style lang="scss">
 
 .ProseMirror {
-    @apply p-4 outline-none;
+    @apply outline-none;
 }
 
-.ProseMirror.article-title {
-    h1 {
-        @apply text-4xl font-extrabold;
-    }
-
-    h1.is-editor-empty:first-child::before {
-        content: attr(data-placeholder);
-        float: left;
-        color: #adb5bd;
-        pointer-events: none;
-        height: 0;
-    }
-}
-
-.ProseMirror.article-body {
+.ProseMirror.article {
 
     min-height: 512px;
 
-    p.is-editor-empty:first-child::before {
-        content: attr(data-placeholder);
+    .is-empty::before {
         float: left;
         color: #adb5bd;
         pointer-events: none;
         height: 0;
     }
 
-    p {
-        @apply leading-relaxed mt-4;
+    h1.is-empty:first-of-type::before {
+        content: attr(data-placeholder);
     }
 
-    h1 {
-        @apply text-xl font-extrabold mt-6;
+    p.is-empty:first-of-type::before {
+        content: 'Subtitle';
     }
 
-    h2 {
-        @apply text-xl font-extrabold;
+    p:first-of-type {
+        @apply mt-2 outline-none text-lg font-medium text-neutral-500 dark:text-neutral-400;
     }
 
-    h3 {
-        @apply text-xl font-extrabold;
-    }
-
-    h4 {
-        @apply text-xl font-extrabold;
-    }
-
-    h5 {
-        @apply text-xl font-extrabold;
-    }
-
-    h6 {
-        @apply text-xl font-extrabold;
+    p.is-empty:nth-of-type(2)::before {
+        content: attr(data-placeholder);
     }
 
     a {

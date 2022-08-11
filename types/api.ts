@@ -1,4 +1,3 @@
-import { Strapi4ResponseData } from "@nuxtjs/strapi/dist/runtime/types"
 
 export interface AuthorDto {
     id: number
@@ -11,7 +10,14 @@ export interface AuthorDto {
     articles?: ArticleDto[]
 }
 
-export interface ArticleDtoAttribs {
+export interface StrapiDto {
+    publishedAt: string
+    createdAt: string
+    updatedAt: string
+}
+
+export interface ArticleDto extends StrapiDto {
+    id: number
     title: string
     subtitle: string
     summary: string
@@ -19,13 +25,6 @@ export interface ArticleDtoAttribs {
     author?: AuthorDto
     thumbnail: any
     slug: string
-    publishedAt: string
-    createdAt: string
-    updatedAt: string
-}
-
-export interface ArticleDto extends Strapi4ResponseData<ArticleDtoAttribs> {
-    id: number
 }
 
 export interface CategoryDto {

@@ -3,10 +3,10 @@ body {
     @apply bg-neutral-50 text-neutral-900;
 
     /* Dark */
-    @apply dark:bg-neutral-900 dark:text-neutral-200;
+    @apply dark:bg-neutral-900 dark:text-neutral-300;
 }
 
-button {
+button[app] {
     /* Default */
     @apply w-full h-10 rounded-md;
 
@@ -23,4 +23,36 @@ input {
 
 svg {
     display: inline;
+}
+
+p {
+    @apply leading-relaxed mt-4;
+}
+
+h1 {
+    @apply text-4xl font-extrabold dark:text-neutral-100;
+}
+
+h2 {
+    @apply text-xl font-bold mt-6 dark:text-neutral-200;
+}
+
+h3 {
+    @apply text-xl;
+}
+
+h4 {
+    @apply text-xl;
+}
+
+h5 {
+    @apply text-xl;
+}
+
+h6 {
+    @apply text-xl;
+}
+
+a {
+    @apply underline cursor-pointer;
 }

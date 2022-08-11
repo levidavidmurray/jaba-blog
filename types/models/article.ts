@@ -5,6 +5,18 @@ import { ArticleDto } from '../api'
 export class Article {
     static AVERAGE_READING_WPM = 250
 
+    static getPublishedAtDisplay(date: Dayjs): string {
+        const { $dayjs } = useNuxtApp();
+        return ($dayjs() as Dayjs).to(date);
+        return dayjs().to(date);
+        if (date.year() < dayjs().year()) {
+            return dayjs(date).format('MMM DD, YYYY')
+        }
+
+        // Current year
+        return dayjs(date).format('MMM DD')
+    }
+
     id: number
     title: string
     subtitle: string
@@ -18,40 +30,40 @@ export class Article {
     thumbnail?: any
     thumbnailUrl?: string
 
-    constructor(dto: ArticleDto, codeHighlight?: boolean) {
-        const { attributes } = dto;
+    constructor(dto: ArticleDto) {
         this.id = dto.id
-        this.title = attributes.title
-        this.subtitle = attributes.subtitle
-        this.summary = attributes.summary
-        this.body = attributes.body;
-        this.slug = attributes.slug
-        this.publishedAt = dayjs(attributes.publishedAt)
+        this.title = dto.title
+        this.subtitle = dto.subtitle
+        this.summary = dto.summary
+        this.body = dto.body;
+        this.slug = dto.slug
+        this.publishedAt = dayjs(dto.publishedAt)
         this.publishedAtDisplay = Article.getPublishedAtDisplay(
             this.publishedAt
         )
 
-        // if (attributes.author) {
-        //     this.author = new Author(attributes.author)
+        // if (dto.author) {
+        //     this.author = new Author(dto.author)
         // }
 
-        if (attributes.thumbnail) {
-            this.thumbnail = attributes.thumbnail
+        if (dto.thumbnail) {
+            this.thumbnail = dto.thumbnail
             this.thumbnailUrl = getStrapiMedia(
                 this.thumbnail.formats.thumbnail.url
             )
         }
     }
 
-    static getPublishedAtDisplay(date: Dayjs): string {
-        const { $dayjs } = useNuxtApp();
-        return ($dayjs() as Dayjs).to(date);
-        return dayjs().to(date);
-        if (date.year() < dayjs().year()) {
-            return dayjs(date).format('MMM DD, YYYY')
-        }
+    getEditBody(): string {
+        const titleEl = document.createElement('h1')
+        titleEl.innerText = this.title
 
-        // Current year
-        return dayjs(date).format('MMM DD')
+        const subtitleEl = document.createElement('p')
+        subtitleEl.innerText = this.subtitle;
+
+        const doc = new DOMParser().parseFromString(this.body, 'text/html')
+        doc.documentElement.prepend(titleEl, subtitleEl)
+
+        return doc.documentElement.outerHTML
     }
 }

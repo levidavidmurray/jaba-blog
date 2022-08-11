@@ -1,35 +1,32 @@
 <template>
-    <NuxtLink class="article-item" :to="editLink">
-        <div>
-            <div class="px-2 pb-5">
+    <div class="article-item">
+        <div class="px-2 pb-5">
 
-                <!-- Header -->
-                <div 
-                    :class="[featured ? 'text-sm' : 'text-xs']"
-                    class="px-2 font-medium flex justify-between py-3 border-b-2 dark:border-neutral-600 border-neutral-100 text-slate-400 dark:text-neutral-400">
-                    <span>{{ article.publishedAtDisplay }}</span>
-                    <span>5 min read</span>
-                </div>
-
-                <!-- Content -->
-                <div class="px-2 mt-4 text-neutral-900 dark:text-neutral-200">
-                    <h3 :class="[featured ? 'text-2xl' : 'text-xl']" class="font-extrabold">{{ article.title }}</h3>
-                    <h5 
-                        :class="[featured ? 'text-base' : 'text-sm']" 
-                        class="text-neutral-500 dark:text-neutral-300 mt-2.5"
-                    >
-                        {{ article.subtitle }}
-                    </h5>
-                    <p v-if="featured" class="text-sm mt-2 leading-relaxed">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque eleifend risus sed risus hendrerit, quis hendrerit augue vestibulum. Donec non odio nec augue imperdiet consequat. Aliquam eu dui viverra lectus?</p>
-
-                    <!-- Button -->
-                    <button v-if="featured" class="mt-4">Read More</button>
-                </div>
-
-
+            <!-- Header -->
+            <div 
+                :class="[featured ? 'text-sm' : 'text-xs']"
+                class="px-2 font-medium flex justify-between py-3 border-b dark:border-neutral-600 border-neutral-100 text-slate-400 dark:text-neutral-400">
+                <span>{{ article.publishedAtDisplay }}</span>
+                <span>5 min read</span>
             </div>
+
+            <!-- Content -->
+            <div class="px-2 mt-4 text-neutral-900 dark:text-neutral-200">
+                <h3 :class="[featured ? 'text-2xl' : 'text-xl']" class="font-extrabold">{{ article.title }}</h3>
+                <h5 
+                    :class="[featured ? 'text-base' : 'text-sm']" 
+                    class="text-neutral-500 dark:text-neutral-300 mt-2.5"
+                >
+                    {{ article.subtitle }}
+                </h5>
+                <p v-if="featured" class="text-sm mt-2 leading-relaxed">{{ article.summary }}</p>
+
+                <!-- Button -->
+                <button app v-if="featured" @click="navigateTo(viewLink)" class="mt-4">Read More</button>
+            </div>
+
         </div>
-    </NuxtLink>
+    </div>
 </template>
 
 <script lang="ts" setup>
@@ -40,7 +37,8 @@ const { featured, article } = defineProps<{
     article: Article
 }>();
 
-const editLink = `/editor/${article.id}`
+const viewLink = `/${article.id}`
+const editLink = `/edit/${article.id}`
 
 </script>
 

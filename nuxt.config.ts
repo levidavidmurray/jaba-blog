@@ -11,8 +11,8 @@ export default defineNuxtConfig({
     ]
   },
   css: ['assets/css/global.css'],
-  modules: ['@nuxtjs/strapi'],
-  buildModules: [
+  modules: [
+    '@nuxtjs/strapi',
     'nuxt-windicss',
     '@pinia/nuxt',
     'unplugin-icons/nuxt',

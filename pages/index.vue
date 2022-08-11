@@ -3,9 +3,9 @@
         <div class="min-h-screen">
             <SiteHeader />
             <div class="p-4 my-0 mx-auto max-w-lg">
-                <ArticleItem :featured="true" :article="featured" />
+                <ArticleItem v-if="featured" :featured="true" :article="featured" />
                 <div class="mt-8 flex-col space-y-2">
-                    <ArticleItem v-for="article in articles" :article="article" />
+                    <ArticleItem v-for="article in listedArticles" :article="article" />
                 </div>
             </div>
         </div>
@@ -13,16 +13,17 @@
 </template>
 
 <script lang="ts" setup>
-import { Strapi4Response } from '@nuxtjs/strapi/dist/runtime/types';
-import { ArticleDto, ArticleDtoAttribs } from '@/types/api';
+import { ArticleDto } from '@/types/api';
 import { Article } from '@/types/models/article';
 
-const { find } = useStrapi4();
+const { $strapi } = useNuxtApp()
 
-const response = await find<Strapi4Response<ArticleDtoAttribs>>('articles', { sort: 'publishedAt:DESC' });
-const articles = (response.data as ArticleDto[]).map(dto => new Article(dto))
+const response = await $strapi.find<ArticleDto[]>('articles', { sort: 'publishedAt:desc' });
+const articles = response.data.map(dto => new Article(dto))
 
-const featured = articles.shift();
+const featured = articles[0]
+
+const listedArticles = articles.filter(a => a !== featured)
 
 console.log(articles);
 </script>

@@ -30,6 +30,8 @@
     "@tiptap/starter-kit": "^2.0.0-beta.191",
     "@tiptap/vue-3": "^2.0.0-beta.96",
     "dayjs": "^1.11.4",
-    "pinia": "^2.0.11"
+    "pinia": "^2.0.11",
+    "strapi-sdk-js": "^2.2.0",
+    "vant": "^3.5.4"
   }
 }
