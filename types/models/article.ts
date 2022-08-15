@@ -1,20 +1,20 @@
-import dayjs, { Dayjs } from 'dayjs'
+import { Dayjs } from 'dayjs'
 import { getStrapiMedia } from '@/utils/media'
 import { ArticleDto } from '../api'
+import countWords from 'word-counting'
 
 export class Article {
     static AVERAGE_READING_WPM = 250
+    static FRIENDLY_DATE_MONTH_CEIL = 6
 
-    static getPublishedAtDisplay(date: Dayjs): string {
-        const { $dayjs } = useNuxtApp();
+    getPublishedAtDisplay(date: Dayjs): string {
+        // const { $dayjs } = useNuxtApp();
         return ($dayjs() as Dayjs).to(date);
-        return dayjs().to(date);
-        if (date.year() < dayjs().year()) {
-            return dayjs(date).format('MMM DD, YYYY')
-        }
+    }
 
-        // Current year
-        return dayjs(date).format('MMM DD')
+    static calcMinutesToRead(content: string): number {
+        const wordCount = countWords(content, { isHtml: true }).wordsCount
+        return Math.ceil(wordCount / Article.AVERAGE_READING_WPM)
     }
 
     id: number
@@ -23,24 +23,40 @@ export class Article {
     summary?: string
     body?: string
     slug: string
+    points: number
     publishedAt: Dayjs
     publishedAtDisplay: string
-    minutesToRead?: number
+    publishedDateDisplay: string
+    minutesToRead: number
     // author?: Author
     thumbnail?: any
     thumbnailUrl?: string
+    dto: ArticleDto
 
     constructor(dto: ArticleDto) {
+        this.dto = dto
         this.id = dto.id
         this.title = dto.title
         this.subtitle = dto.subtitle
         this.summary = dto.summary
         this.body = dto.body;
         this.slug = dto.slug
-        this.publishedAt = dayjs(dto.publishedAt)
-        this.publishedAtDisplay = Article.getPublishedAtDisplay(
-            this.publishedAt
-        )
+        this.points = dto.points
+        this.publishedAt = $dayjs(dto.publishedAt)
+
+        this.publishedAtDisplay = this.getPublishedAtDisplay(this.publishedAt)
+
+        this.publishedDateDisplay = this.publishedAt.format('MMM D')
+        if (this.publishedAt.year() !== $dayjs().year()) {
+            this.publishedDateDisplay = this.publishedAt.format('MMM D, YYYY')
+        }
+
+        const monthsPublished = $dayjs().diff(this.publishedAt, 'month')
+        if (monthsPublished >= Article.FRIENDLY_DATE_MONTH_CEIL) {
+            this.publishedAtDisplay = this.publishedDateDisplay
+        }
+
+        this.minutesToRead = Article.calcMinutesToRead(this.body)
 
         // if (dto.author) {
         //     this.author = new Author(dto.author)
@@ -52,6 +68,18 @@ export class Article {
                 this.thumbnail.formats.thumbnail.url
             )
         }
+    }
+
+    get editLink(): string {
+        return `/edit/${this.id}`
+    }
+
+    get readLink(): string {
+        return `/${this.id}`
+    }
+
+    get isPublished(): boolean {
+        return Boolean(this.dto.publishedAt)
     }
 
     getEditBody(): string {

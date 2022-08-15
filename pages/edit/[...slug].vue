@@ -2,46 +2,233 @@
     <nuxt-layout name="nav-header">
         <client-only>
             <div class="max-w-xl mx-auto mt-8 pb-20 relative">
-                <tiptap :article="article" @update="onEditorUpdate" />
 
-                <button app @click="onSave" class="mt-8 max-w-xs block mx-auto">Save</button>
+                <!-- <button app @click="onSave" class="mt-8 max-w-xs block mx-auto">Save</button> -->
 
-                <div v-if="article" class="admin-actions">
-                    <button @click="onDelete">
-                        <material-symbols:delete class="text-2xl text-neutral-400 hover:text-red-600 active:text-red-800" />
-                    </button>
+                <div class="flex">
+                    <n-date-picker v-if="useCustomPublishDate" v-model:value="customPublishDate" type="datetime" />
+
+                    <div class="w-fit ml-auto mr-0 mb-4 flex items-center">
+                        <n-button 
+                            @click="onSave" 
+                            :disabled="saveLoading || publishLoading" 
+                            :loading="saveLoading" 
+                            class="mr-2"
+                            size="medium" 
+                            tertiary 
+                            type="success"
+                        >Save</n-button>
+                        <n-button 
+                            v-if="article && !article.isPublished"
+                            @click="onPublish"
+                            :disabled="saveLoading || publishLoading"
+                            :loading="publishLoading"
+                            size="medium"
+                            secondary
+                            type="success"
+                        >Publish</n-button>
+                        <n-dropdown
+                            v-if="article"
+                            trigger="click"
+                            :options="dropdownOpts"
+                            @select="handleDropdownSelect"
+                        >
+                            <n-button circle quaternary class="ml-4">
+                                <mdi:dots-vertical class="text-xl" />
+                            </n-button>
+                        </n-dropdown>
+                    </div>
+
                 </div>
+
+                <tiptap :article="article" @update="onEditorUpdate" />
             </div>
         </client-only>
     </nuxt-layout>
 </template>
 
 <script lang="ts" setup>
+import type { Component } from 'vue'
+import { NButton, NDropdown, NIcon, useMessage, useDialog, DropdownOption, NDatePicker } from 'naive-ui'
 import { ArticleDto } from '~~/types/api';
 import { Article } from '~~/types/models/article';
-
-const { $strapi } = useNuxtApp()
+import DeleteIcon from '~icons/material-symbols/delete'
+import UnpublishedIcon from '~icons/material-symbols/unpublished'
+import CalendarIcon from '~icons/material-symbols/calendar-month'
 
 const route = useRoute();
 const router = useRouter();
+const message = useMessage()
+const dialog = useDialog()
+
+const useCustomPublishDate = ref(false)
+const customPublishDate = ref($dayjs().valueOf())
 
 let articleHtml: string;
-
 let article: Article | undefined = undefined;
 let articleId: string;
 
+const saveLoading = ref(false)
+const publishLoading = ref(false)
+
+const renderIcon = (icon: Component) => {
+    return () => {
+        return h(NIcon, null, {
+            default: () => h(icon)
+        })
+    }
+}
+
+/* --n-option-text-color: var(--wc-red-400); */
+const dropdownOpts: DropdownOption[] = reactive([
+    {
+        label: 'Delete',
+        key: 'delete',
+        icon: renderIcon(DeleteIcon),
+        props: {
+            style: {
+                '--n-option-text-color': 'var(--wc-red-400)',
+                '--n-prefix-color': 'var(--wc-red-400)',
+            }
+        }
+    },
+])
+
 // Editing existing article
 if (route.params.slug && route.params.slug[0]) {
-    articleId = route.params.slug[0];
-    const response = await $strapi.findOne<ArticleDto>('articles', articleId);
-    article = new Article(response.data);
+    articleId = route.params.slug[0]
+    try {
+        const response = await $strapi.findOne<ArticleDto>('articles', articleId)
+        article = new Article(response.data)
+
+        if (article?.isPublished) {
+            dropdownOpts.unshift({
+                label: 'Unpublish',
+                key: 'unpublish',
+                icon: renderIcon(UnpublishedIcon),
+                props: {
+                    style: {
+                        '--n-option-text-color': 'var(--wc-neutral-500)',
+                        '--n-prefix-color': 'var(--wc-neutral-500)',
+                    }
+                }
+            })
+        } else {
+            dropdownOpts.unshift({
+                label: 'Set Published Date',
+                key: 'publishedDate',
+                icon: renderIcon(CalendarIcon),
+                props: {
+                    style: {
+                        '--n-option-text-color': 'var(--wc-neutral-500)',
+                        '--n-prefix-color': 'var(--wc-neutral-500)',
+                    }
+                }
+            })
+        }
+    } catch (err) {
+        console.error(err)
+        await navigateTo('/edit')
+    }
+
 } 
+
+
+console.log(article, dropdownOpts)
+
+const promptDeleteConfirmation = () => {
+    const d = dialog.warning({
+        title: 'Confirm',
+        content: 'Are you sure?',
+        positiveText: 'Delete',
+        negativeText: 'Cancel',
+        onPositiveClick: async () => {
+            d.loading = true
+            await $strapi.delete('articles', articleId)
+            await new Promise(res => setTimeout(res, 1000))
+            message.success('Article Deleted')
+            await new Promise(res => setTimeout(res, 500))
+            navigateTo('/')
+        },
+        showIcon: false,
+        positiveButtonProps: { class: ['red-dialog-btn'], type: 'error', secondary: true }
+    })
+}
+
+const promptUnpublishConfirmation = () => {
+    const d = dialog.warning({
+        title: 'Confirm',
+        content: 'Are you sure?',
+        positiveText: 'Unpublish',
+        negativeText: 'Cancel',
+        onPositiveClick: async () => {
+            d.loading = true
+            await $strapi.update('articles', article.id, { publishedAt: null })
+            await new Promise(res => setTimeout(res, 1000))
+            message.success('Article Unpublished')
+            await new Promise(res => setTimeout(res, 500))
+            navigateTo('/')
+        },
+        showIcon: false,
+        positiveButtonProps: { class: ['red-dialog-btn'], type: 'error', secondary: true }
+    })
+}
+
+const dropdownActions = {
+    delete: promptDeleteConfirmation,
+    unpublish: promptUnpublishConfirmation,
+    publishedDate: () => {
+        useCustomPublishDate.value = !useCustomPublishDate.value
+    }
+}
+
+const handleDropdownSelect = (opt) => {
+    console.log(opt)
+    dropdownActions[opt]?.()
+}
 
 const onEditorUpdate = (html) => {
     articleHtml = html
 };
 
+const onPublish = async () => {
+    publishLoading.value = true
+    const articleParams = getArticleData()
+
+    articleParams.publishedAt = $dayjs().toISOString()
+    if (useCustomPublishDate.value) {
+        articleParams.publishedAt = $dayjs(customPublishDate.value).toISOString()
+    }
+
+    await $strapi.update<ArticleDto>('articles', articleId, articleParams)
+    setTimeout(() => {
+        publishLoading.value = false
+        router.go(-1)
+    }, 250)
+}
+
 const onSave = async () => {
+    saveLoading.value = true
+    const articleParams = getArticleData()
+
+    if (article) {
+        await $strapi.update<ArticleDto>('articles', articleId, articleParams);
+        setTimeout(() => {
+            saveLoading.value = false
+            router.go(-1)
+        }, 250)
+    } else {
+        articleParams.publishedAt = null
+        const res = await $strapi.create<ArticleDto>('articles', articleParams);
+        setTimeout(() => {
+            saveLoading.value = false
+            navigateTo(`/${res.data.id}`, {replace: true})
+        }, 250)
+    }
+
+};
+
+const getArticleData = (): Partial<ArticleDto> => {
     const parser = new DOMParser();
     const html = parser.parseFromString(articleHtml, 'text/html')
 
@@ -51,25 +238,35 @@ const onSave = async () => {
     titleEl.remove()
     subtitleEl.remove()
 
-    const articleParams: Partial<ArticleDto> = {
+    return {
         title: titleEl.innerText,
         subtitle: subtitleEl.innerText,
         summary: html.querySelectorAll('p')[0].innerText,
         body: html.documentElement.outerHTML,
     }
-
-    if (articleId) {
-        await $strapi.update<ArticleDto>('articles', articleId, articleParams);
-        await router.go(-1)
-    } else {
-        const res = await $strapi.create<ArticleDto>('articles', articleParams);
-        await navigateTo(`/${res.data.id}`, {replace: true})
-    }
-
-};
-
-const onDelete = () => {
-
 }
 
 </script>
+
+<style>
+.n-popconfirm__icon {
+    @apply text-red-500 !important;
+}
+
+.delete-btn {
+    @apply text-neutral-400 hover:text-red-600 active:text-red-800 !important;
+}
+
+.n-dialog__action button.red-dialog-btn {
+    /* @apply bg-transparent text-red-500 hover:text-neutral-50 active:bg-red-600 border-red-700 !important;
+    --n-border: 1px solid var(--wc-red-700) !important; */
+}
+
+.n-dropdown-option {
+    /* --n-option-text-color: var(--wc-red-400); */
+}
+
+.n-dropdown-option .n-icon {
+    @apply flex;
+}
+</style>

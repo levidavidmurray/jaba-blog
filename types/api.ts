@@ -1,3 +1,18 @@
+export interface UserDto {
+    id: number
+    email: string
+    username: string
+    provider: string
+    blocked: boolean
+    confirmed: boolean
+    createdAt: string
+    updatedAt: string
+}
+
+export interface LoginDto {
+    jwt: string
+    user: UserDto
+}
 
 export interface AuthorDto {
     id: number
@@ -25,6 +40,7 @@ export interface ArticleDto extends StrapiDto {
     author?: AuthorDto
     thumbnail: any
     slug: string
+    points: number
 }
 
 export interface CategoryDto {

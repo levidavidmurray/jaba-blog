@@ -1,9 +1,20 @@
 <template>
-    <div class="text-secondary-darker dark:text-white bg-neutral-50 dark:bg-neutral-900">
+    <div class="">
         <div class="min-h-screen">
             <SiteHeader />
+
             <div class="p-4 my-0 mx-auto max-w-lg">
-                <ArticleItem v-if="featured" :featured="true" :article="featured" />
+                <div v-if="authStore.isLoggedIn" class="flex justify-end mb-4">
+                    <nuxt-link to="/edit">
+                        <n-button dashed>
+                            <div class="flex items-center">
+                                <ic:outline-plus class="mr-1" /> New
+                            </div>
+                        </n-button>
+                    </nuxt-link>
+                </div>
+
+                <ArticleItem v-if="featuredArticle" :featured="true" :article="featuredArticle" />
                 <div class="mt-8 flex-col space-y-2">
                     <ArticleItem v-for="article in listedArticles" :article="article" />
                 </div>
@@ -13,17 +24,26 @@
 </template>
 
 <script lang="ts" setup>
+import { NButton } from 'naive-ui'
 import { ArticleDto } from '@/types/api';
 import { Article } from '@/types/models/article';
+import { useAuth } from '~~/store/auth';
 
-const { $strapi } = useNuxtApp()
+const listedArticles = ref<Article[]>([])
+const featuredArticle = ref<Article | null>(null)
 
-const response = await $strapi.find<ArticleDto[]>('articles', { sort: 'publishedAt:desc' });
-const articles = response.data.map(dto => new Article(dto))
+const authStore = useAuth()
 
-const featured = articles[0]
+const fetchArticles = async () => {
+    try {
+        const response = await $strapi.find<ArticleDto[]>('articles', { sort: 'publishedAt:desc' })
+        const articles = response.data.map(dto => new Article(dto))
+        featuredArticle.value = articles[0]
+        listedArticles.value = articles.filter(a => a.id !== featuredArticle.value.id)
+    } catch (error) {
+        console.error('error', error)
+    }
+}
 
-const listedArticles = articles.filter(a => a !== featured)
-
-console.log(articles);
+fetchArticles()
 </script>

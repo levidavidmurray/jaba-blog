@@ -2,18 +2,25 @@
     <nuxt-layout name="nav-header">
         <div class="max-w-xl mx-auto relative mt-8 pb-20">
 
-            <div class="admin-actions">
+            <div class="w-fit ml-auto mr-0 mb-4 flex items-center" v-if="authStore.isLoggedIn">
                 <nuxt-link :to="editLink">
-                    <material-symbols:edit class="text-neutral-400 hover:text-neutral-800 dark:hover:text-neutral-200" />
+                    <n-button circle quaternary>
+                        <material-symbols:edit class="text-neutral-400" />
+                    </n-button>
                 </nuxt-link>
             </div>
 
             <div v-if="article">
+                <div class="flex text-sm text-neutral-400 mb-2">
+                    <span>{{ article.publishedDateDisplay }}</span>
+                    <span class="mx-2">·</span>
+                    <span>{{ article.minutesToRead }} min read</span>
+                </div>
                 <h1>{{ article.title }}</h1>
                 <div>
                     <p class="subtitle">{{ article.subtitle }}</p>
                 </div>
-                <div v-html="article.body"></div>
+                <div class="article" v-html="article.body"></div>
             </div>
         </div>
     </nuxt-layout>
@@ -23,12 +30,12 @@
 import { ArticleDto } from '~~/types/api';
 import { Article } from '~~/types/models/article';
 import { Ref } from 'vue';
-
-// definePageMeta({
-//     layout: 'nav-header',
-// })
+import { useAuth } from '~~/store/auth';
+import { NButton } from 'naive-ui'
 
 const { $strapi } = useNuxtApp()
+const authStore = useAuth()
+await authStore.fetchUser()
 
 const route = useRoute();
 
@@ -57,11 +64,11 @@ if (!route.params.slug || !route.params.slug[0]) {
     right: 0;
     transform: translateX(64px);
 
-    @apply top-2;
+    @apply top-2 flex items-center;
 }
 
 .subtitle {
-    @apply mt-2 outline-none text-lg font-medium text-neutral-500 dark:text-neutral-400;
+    @apply mt-1 outline-none font-medium text-lg text-neutral-500 dark:text-neutral-400;
 }
 
 </style>

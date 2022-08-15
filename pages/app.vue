@@ -109,10 +109,10 @@
           <button class="text-primary px-2 py-1 bg-sky-darker dark:bg-sky-dark focus:outline-transparent rounded-sm" @click="toggleLocales">
             <carbon:language class="h-5 w-5" />
           </button>
-          <button class="text-primary px-2 py-1 bg-sky-darker dark:bg-sky-dark focus:outline-transparent rounded-sm" @click="e => toggleDark()">
+          <!-- <button class="text-primary px-2 py-1 bg-sky-darker dark:bg-sky-dark focus:outline-transparent rounded-sm" @click="e => toggleDark()">
             <carbon:sun class="h-5 w-5" v-if="isDark" />
             <carbon:moon class="h-5 w-5" v-else />
-          </button>
+          </button> -->
           <button class="text-primary px-2 py-1 bg-sky-darker dark:bg-sky-dark focus:outline-transparent rounded-sm" @click="e => gotoGitHub()">
             <carbon:logo-github class="h-5 w-5" />
           </button>
@@ -129,7 +129,7 @@
 <script lang="ts" setup>
 import { useCounter } from '../store/counter'
 import { useI18n } from 'vue-i18n'
-import { isDark, toggleDark } from '../composables/dark'
+// import { isDark, toggleDark } from '../composables/dark'
 
 const { t, locale, availableLocales } = useI18n()
 const counterStore = useCounter()

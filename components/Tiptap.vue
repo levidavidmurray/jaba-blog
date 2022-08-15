@@ -1,12 +1,21 @@
 <template>
     <div>
+        <bubble-menu :editor="editor" :tippy-options="{ duration: 200 }">
+            <button 
+                class="bg-neutral-100 border border-neutral-200 dark:bg-neutral-800 dark:border-neutral-700 px-2 flex items-center rounded-sm" 
+                @click="handleLink"
+            >
+                <material-symbols:link v-if="!editor.isActive('link')" class="text-base text-emerald-500" />
+                <material-symbols:link-off v-else class="text-base text-emerald-500" />
+            </button>
+        </bubble-menu>
         <editor-content :editor="editor" />
     </div>
 </template>
 
 <script lang="ts" setup>
     import { Article } from '@/types/models/article'
-    import { Editor, EditorContent } from '@tiptap/vue-3'
+    import { BubbleMenu, Editor, EditorContent } from '@tiptap/vue-3'
     import StarterKit from '@tiptap/starter-kit'
     import Image from '@tiptap/extension-image'
     import Link from '@tiptap/extension-link'
@@ -34,7 +43,7 @@
             CustomDocument,
             StarterKit.configure({ document: false }),
             Image,
-            Link,
+            Link.configure({ openOnClick: false }),
             Typography,
             Placeholder.configure({
                 placeholder: ({ node }) => {
@@ -47,6 +56,29 @@
         ],
         autofocus: true,
     })
+
+    const handleLink = () => {
+        if (editor.isActive('link')) {
+            editor.chain().focus().unsetLink().run()
+            return
+        }
+
+        setLink()
+    }
+
+    const setLink = () => {
+        const prevUrl = editor.getAttributes('link').href
+        const url = window.prompt('URL', prevUrl)
+
+        if (url === null) return
+
+        if (url === '') {
+            editor.chain().focus().extendMarkRange('link').unsetLink().run()
+            return
+        }
+
+        editor.chain().focus().extendMarkRange('link').setLink({ href: url }).run()
+    }
 
     const onUpdate = () => {
         emit('update', editor.getHTML());
@@ -90,7 +122,7 @@
     }
 
     a {
-        @apply underline cursor-pointer;
+        @apply underline cursor-text text-emerald-500;
     }
 }
 </style>

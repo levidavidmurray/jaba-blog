@@ -3,18 +3,47 @@ import ViteComponents from 'unplugin-vue-components/vite'
 import IconsResolver from 'unplugin-icons/resolver'
 
 export default defineNuxtConfig({
+  ssr: true,
   meta: {
     title: 'Change or Die | Blog',
     link: [
       { rel: 'preconnect', href: 'https://rsms.me' },
       { rel: 'stylesheet', href: 'https://rsms.me/inter/inter.css' },
-    ]
+    ],
+    script: [
+      { src: 'https://accounts.google.com/gsi/client', async: true, defer: true },
+    ],
   },
-  css: ['assets/css/global.css'],
+  build: {
+    transpile:
+      process.env.NODE_ENV === 'production'
+        ? [
+            'naive-ui',
+            'vueuc',
+            '@css-render/vue3-ssr',
+            '@juggle/resize-observer'
+          ]
+        : ['@juggle/resize-observer']
+  },
+  css: [
+    'assets/css/global.css',
+  ],
+  runtimeConfig: {
+    public: {
+      strapi: {
+        baseURL: 'http://localhost:1337'
+      },
+      google: {
+        clientId: process.env.GOOGLE_CLIENT_ID || '1234',
+      }
+    },
+  },
+  buildModules: [
+    '@pinia/nuxt',
+  ],
   modules: [
     '@nuxtjs/strapi',
     'nuxt-windicss',
-    '@pinia/nuxt',
     'unplugin-icons/nuxt',
     '@vueuse/nuxt',
     [
@@ -27,15 +56,16 @@ export default defineNuxtConfig({
       }
     ]
   ],
-  strapi: {
-    url: process.env.STRAPI_URL || 'http://localhost:1337',
-    prefix: '/api',
-    version: 'v4',
-  },
   windicss: {
     analyze: true,
   },
   vite: {
+    optimizeDeps: {
+      include:
+        process.env.NODE_ENV === 'development'
+          ? ['naive-ui', 'vueuc', 'date-fns-tz/esm/formatInTimeZone']
+          : []
+    },
     plugins: [
       ViteComponents({
         resolvers: [

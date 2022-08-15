@@ -2,9 +2,11 @@
   "extends": "./.nuxt/tsconfig.json",
   "compilerOptions": {
     "types": [
+      "naive-ui/volar",
       "nuxt-windicss",
       "@pinia/nuxt",
-      "@nuxt/types"
+      "@nuxt/types",
+      "@nuxtjs/auth-next"
     ]
   }
 }

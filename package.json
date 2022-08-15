@@ -26,12 +26,16 @@
     "unplugin-vue-components": "^0.17.21"
   },
   "dependencies": {
+    "@css-render/vue3-ssr": "^0.15.10",
+    "@tiptap/extension-bubble-menu": "^2.0.0-beta.61",
     "@tiptap/extension-placeholder": "^2.0.0-beta.53",
     "@tiptap/starter-kit": "^2.0.0-beta.191",
     "@tiptap/vue-3": "^2.0.0-beta.96",
+    "axios": "^0.27.2",
     "dayjs": "^1.11.4",
+    "naive-ui": "^2.32.1",
     "pinia": "^2.0.11",
-    "strapi-sdk-js": "^2.2.0",
-    "vant": "^3.5.4"
+    "strapi-sdk-js": "/home/levi/Code/gh/strapi-sdk-js",
+    "word-counting": "^1.1.4"
   }
 }
