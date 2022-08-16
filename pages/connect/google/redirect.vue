@@ -8,13 +8,12 @@
 
 const login = async () => {
     try {
-        const res = await $strapi.authenticateProvider("google")
-        console.log(res)
+        await $strapi.authenticateProvider("google")
     } catch (error) {
         // useMessage().error()
     }
     if (process.client) {
-        navigateTo('/')
+        navigateTo('/', {replace: true})
     }
 }
 

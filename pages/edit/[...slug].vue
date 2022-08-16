@@ -15,7 +15,7 @@
                     <div class="w-fit ml-auto mr-0 mb-4 flex items-center">
                         <n-button 
                             @click="onSave" 
-                            :disabled="saveLoading || publishLoading" 
+                            :disabled="saveLoading || publishLoading || !canPublish" 
                             :loading="saveLoading" 
                             class="mr-2"
                             size="medium" 
@@ -23,9 +23,9 @@
                             type="success"
                         >Save</n-button>
                         <n-button 
-                            v-if="article && !article.isPublished"
+                            v-if="(article && !article.isPublished) || !article"
                             @click="onPublish"
-                            :disabled="saveLoading || publishLoading"
+                            :disabled="saveLoading || publishLoading || !canPublish"
                             :loading="publishLoading"
                             size="medium"
                             secondary
@@ -67,10 +67,12 @@ const dialog = useDialog()
 
 const useCustomPublishDate = ref(false)
 const customPublishDate = ref($dayjs().valueOf())
+const canPublish = ref(false)
 
-let articleHtml: string;
-let article: Article | undefined = undefined;
-let articleId: string;
+let articleHtml: string
+let article: Article | undefined = undefined
+let articleId: string
+let validateTimeout: NodeJS.Timeout
 
 const saveLoading = ref(false)
 const publishLoading = ref(false)
@@ -82,6 +84,15 @@ const renderIcon = (icon: Component) => {
         })
     }
 }
+
+const onEditorUpdate = (html) => {
+    articleHtml = html
+
+    clearTimeout(validateTimeout)
+    validateTimeout = setTimeout(() => {
+        validatePublishableData()
+    }, 500)
+};
 
 /* --n-option-text-color: var(--wc-red-400); */
 const dropdownOpts: DropdownOption[] = reactive([
@@ -98,44 +109,6 @@ const dropdownOpts: DropdownOption[] = reactive([
     },
 ])
 
-// Editing existing article
-if (route.params.slug && route.params.slug[0]) {
-    articleId = route.params.slug[0]
-    try {
-        const response = await $strapi.findOne<ArticleDto>('articles', articleId)
-        article = new Article(response.data)
-
-        if (article?.isPublished) {
-            dropdownOpts.unshift({
-                label: 'Unpublish',
-                key: 'unpublish',
-                icon: renderIcon(UnpublishedIcon),
-                props: {
-                    style: {
-                        '--n-option-text-color': 'var(--wc-neutral-500)',
-                        '--n-prefix-color': 'var(--wc-neutral-500)',
-                    }
-                }
-            })
-        } else {
-            dropdownOpts.unshift({
-                label: 'Set Published Date',
-                key: 'publishedDate',
-                icon: renderIcon(CalendarIcon),
-                props: {
-                    style: {
-                        '--n-option-text-color': 'var(--wc-neutral-500)',
-                        '--n-prefix-color': 'var(--wc-neutral-500)',
-                    }
-                }
-            })
-        }
-    } catch (err) {
-        console.error(err)
-        await navigateTo('/edit')
-    }
-
-} 
 
 const promptDeleteConfirmation = () => {
     const d = dialog.warning({
@@ -184,13 +157,8 @@ const dropdownActions = {
 }
 
 const handleDropdownSelect = (opt) => {
-    console.log(opt)
     dropdownActions[opt]?.()
 }
-
-const onEditorUpdate = (html) => {
-    articleHtml = html
-};
 
 const onPublish = async () => {
     publishLoading.value = true
@@ -201,11 +169,19 @@ const onPublish = async () => {
         articleParams.publishedAt = $dayjs(customPublishDate.value).toISOString()
     }
 
-    await $strapi.update<ArticleDto>('articles', articleId, articleParams)
-    setTimeout(() => {
-        publishLoading.value = false
-        router.go(-1)
-    }, 250)
+    if (article) {
+        await $strapi.update<ArticleDto>('articles', articleId, articleParams);
+        setTimeout(() => {
+            publishLoading.value = false
+            router.go(-1)
+        }, 250)
+    } else {
+        const res = await $strapi.create<ArticleDto>('articles', articleParams);
+        setTimeout(() => {
+            publishLoading.value = false
+            navigateTo(`/${res.data.id}`, {replace: true})
+        }, 250)
+    }
 }
 
 const onSave = async () => {
@@ -236,15 +212,65 @@ const getArticleData = (): Partial<ArticleDto> => {
     const titleEl = html.querySelector('h1')
     const subtitleEl = html.querySelector('p')
 
-    titleEl.remove()
-    subtitleEl.remove()
+    titleEl?.remove()
+    subtitleEl?.remove()
 
     return {
-        title: titleEl.innerText,
-        subtitle: subtitleEl.innerText,
-        summary: html.querySelectorAll('p')[0].innerText,
-        body: html.documentElement.outerHTML,
+        title: titleEl?.innerText,
+        subtitle: subtitleEl?.innerText,
+        summary: html.querySelectorAll('p')?.[0]?.innerText,
+        body: html.documentElement?.outerHTML,
     }
+}
+
+// Ensure title, subtitle and body exist
+const validatePublishableData = () => {
+    const {title, subtitle, body} = getArticleData()
+    canPublish.value = Boolean(title && subtitle && body)
+}
+
+// Editing existing article
+if (route.params.slug && route.params.slug[0]) {
+    articleId = route.params.slug[0]
+    try {
+        const response = await $strapi.findOne<ArticleDto>('articles', articleId)
+        article = new Article(response.data)
+        validatePublishableData()
+
+        if (article?.isPublished) {
+            dropdownOpts.unshift({
+                label: 'Unpublish',
+                key: 'unpublish',
+                icon: renderIcon(UnpublishedIcon),
+                props: {
+                    style: {
+                        '--n-option-text-color': 'var(--wc-neutral-500)',
+                        '--n-prefix-color': 'var(--wc-neutral-500)',
+                    }
+                }
+            })
+        } else {
+            dropdownOpts.unshift({
+                label: 'Set Published Date',
+                key: 'publishedDate',
+                icon: renderIcon(CalendarIcon),
+                props: {
+                    style: {
+                        '--n-option-text-color': 'var(--wc-neutral-500)',
+                        '--n-prefix-color': 'var(--wc-neutral-500)',
+                    }
+                }
+            })
+        }
+    } catch (err) {
+        console.error(err)
+        await navigateTo('/edit')
+    }
+
+} 
+
+if (process.client) {
+    validatePublishableData()
 }
 
 </script>

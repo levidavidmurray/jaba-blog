@@ -48,8 +48,6 @@
             Placeholder.configure({
                 placeholder: ({ node }) => {
                     if (node.type.name === 'heading') return "What's the title?"
-                    console.log(node)
-
                     return "What's on your mind?"
                 }
             })

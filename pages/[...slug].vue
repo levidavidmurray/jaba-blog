@@ -42,10 +42,6 @@ const route = useRoute();
 let article: Ref<Article | null> = ref(null);
 let editLink: string;
 
-onActivated(() => {
-    console.log('Activated!')
-})
-
 if (!route.params.slug || !route.params.slug[0]) {
     // await router.push('/')
 } else {
