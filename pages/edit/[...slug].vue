@@ -5,8 +5,12 @@
 
                 <!-- <button app @click="onSave" class="mt-8 max-w-xs block mx-auto">Save</button> -->
 
-                <div class="flex">
+                <div class="flex items-center">
                     <n-date-picker v-if="useCustomPublishDate" v-model:value="customPublishDate" type="datetime" />
+                    <div v-else-if="article" class="text-neutral-500">
+                        <span v-if="article.isPublished" class="italic">Published {{ article.publishedAtDisplay }}</span>
+                        <span v-else class="italic">Draft</span>
+                    </div>
 
                     <div class="w-fit ml-auto mr-0 mb-4 flex items-center">
                         <n-button 
@@ -132,9 +136,6 @@ if (route.params.slug && route.params.slug[0]) {
     }
 
 } 
-
-
-console.log(article, dropdownOpts)
 
 const promptDeleteConfirmation = () => {
     const d = dialog.warning({

@@ -56,6 +56,12 @@ export class Article {
             this.publishedAtDisplay = this.publishedDateDisplay
         }
 
+        if (!dto.publishedAt) {
+            const draftDisplay = 'Draft'
+            this.publishedAtDisplay = draftDisplay
+            this.publishedDateDisplay = draftDisplay
+        }
+
         this.minutesToRead = Article.calcMinutesToRead(this.body)
 
         // if (dto.author) {

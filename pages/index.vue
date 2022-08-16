@@ -4,7 +4,14 @@
             <SiteHeader />
 
             <div class="p-4 my-0 mx-auto max-w-lg">
-                <div v-if="authStore.isLoggedIn" class="flex justify-end mb-4">
+                <div v-if="authStore.isLoggedIn" class="flex justify-between mb-4">
+                    <n-select
+                        style="width: 128px;"
+                        :options="selectOpts"
+                        v-model:value="filterValue"
+                        @update:value="handleFilter"
+                    >
+                    </n-select>
                     <nuxt-link to="/edit">
                         <n-button dashed>
                             <div class="flex items-center">
@@ -14,9 +21,20 @@
                     </nuxt-link>
                 </div>
 
-                <ArticleItem v-if="featuredArticle" :featured="true" :article="featuredArticle" />
-                <div class="mt-8 flex-col space-y-2">
-                    <ArticleItem v-for="article in listedArticles" :article="article" />
+                <div v-if="featuredArticle">
+                    <ArticleItem v-if="featuredArticle" :featured="true" :article="featuredArticle" />
+                    <div class="mt-8 flex-col space-y-2">
+                        <ArticleItem v-for="article in listedArticles" :article="article" />
+                    </div>
+                </div>
+                <div v-else>
+                    <n-result
+                        v-if="!loading"
+                        title="No Posts Found"
+                        :description="`No '${filterValue}' Found`"
+                    >
+                        
+                    </n-result>
                 </div>
             </div>
         </div>
@@ -24,7 +42,7 @@
 </template>
 
 <script lang="ts" setup>
-import { NButton } from 'naive-ui'
+import { NButton, NSelect, NResult } from 'naive-ui'
 import { ArticleDto } from '@/types/api';
 import { Article } from '@/types/models/article';
 import { useAuth } from '~~/store/auth';
@@ -34,15 +52,56 @@ const featuredArticle = ref<Article | null>(null)
 
 const authStore = useAuth()
 
+const loading = ref(false)
+
+const selectOpts = [
+    {
+        label: 'Published',
+        value: 'published',
+    },
+    {
+        label: 'Drafts',
+        value: 'drafts',
+    },
+]
+
+const filterValue = ref(selectOpts[0].label)
+
 const fetchArticles = async () => {
+    loading.value = true
     try {
         const response = await $strapi.find<ArticleDto[]>('articles', { sort: 'publishedAt:desc' })
-        const articles = response.data.map(dto => new Article(dto))
-        featuredArticle.value = articles[0]
-        listedArticles.value = articles.filter(a => a.id !== featuredArticle.value.id)
+        displayArticles(response.data)
     } catch (error) {
         console.error('error', error)
     }
+    loading.value = false
+}
+
+const fetchDrafts = async () => {
+    loading.value = true
+    try {
+        const response = await $strapi.find<ArticleDto[]>('articles', { sort: 'updatedAt:desc', publicationState: 'preview', filters: {'publishedAt': {'$null': true}} })
+        displayArticles(response.data)
+    } catch (error) {
+        console.error('error', error)
+    }
+    loading.value = false
+}
+
+const displayArticles = (articleDtos: ArticleDto[]) => {
+    const articles = articleDtos.map(dto => new Article(dto))
+    featuredArticle.value = articles[0]
+    listedArticles.value = articles.filter(a => a.id !== featuredArticle.value.id)
+}
+
+const dropdownActions = {
+    published: fetchArticles,
+    drafts: fetchDrafts
+}
+
+const handleFilter = (value: string) => {
+    dropdownActions[value]?.()
 }
 
 fetchArticles()
