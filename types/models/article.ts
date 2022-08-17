@@ -1,7 +1,7 @@
 import { Dayjs } from 'dayjs'
 import { getStrapiMedia } from '@/utils/media'
 import { ArticleDto } from '../api'
-import countWords from 'word-counting'
+import countWords from 'word-counting/dist/word-counting.umd'
 
 export class Article {
     static AVERAGE_READING_WPM = 250
@@ -14,6 +14,7 @@ export class Article {
 
     static calcMinutesToRead(content: string): number {
         const wordCount = countWords(content, { isHtml: true }).wordsCount
+        // const wordCount = Article.AVERAGE_READING_WPM
         return Math.ceil(wordCount / Article.AVERAGE_READING_WPM)
     }
 
@@ -77,11 +78,11 @@ export class Article {
     }
 
     get editLink(): string {
-        return `/edit/${this.id}`
+        return `/edit/${this.slug}`
     }
 
     get readLink(): string {
-        return `/${this.id}`
+        return `/${this.slug}`
     }
 
     get isPublished(): boolean {

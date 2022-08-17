@@ -59,11 +59,18 @@ import { Article } from '~~/types/models/article';
 import DeleteIcon from '~icons/material-symbols/delete'
 import UnpublishedIcon from '~icons/material-symbols/unpublished'
 import CalendarIcon from '~icons/material-symbols/calendar-month'
+import { useAuth } from '~~/store/auth';
 
-const route = useRoute();
-const router = useRouter();
+const route = useRoute()
+const router = useRouter()
+const authStore = useAuth()
 const message = useMessage()
 const dialog = useDialog()
+
+await authStore.fetchUser()
+if (process.client && !authStore.isLoggedIn) {
+    await navigateTo('/', { replace: true })
+}
 
 const useCustomPublishDate = ref(false)
 const customPublishDate = ref($dayjs().valueOf())
@@ -71,7 +78,7 @@ const canPublish = ref(false)
 
 let articleHtml: string
 let article: Article | undefined = undefined
-let articleId: string
+let articleSlug: string
 let validateTimeout: NodeJS.Timeout
 
 const saveLoading = ref(false)
@@ -118,7 +125,7 @@ const promptDeleteConfirmation = () => {
         negativeText: 'Cancel',
         onPositiveClick: async () => {
             d.loading = true
-            await $strapi.delete('articles', articleId)
+            await $strapi.delete('articles', article.id)
             await new Promise(res => setTimeout(res, 1000))
             message.success('Article Deleted')
             await new Promise(res => setTimeout(res, 500))
@@ -170,7 +177,7 @@ const onPublish = async () => {
     }
 
     if (article) {
-        await $strapi.update<ArticleDto>('articles', articleId, articleParams);
+        await $strapi.update<ArticleDto>('articles', article.id, articleParams);
         setTimeout(() => {
             publishLoading.value = false
             router.go(-1)
@@ -179,7 +186,7 @@ const onPublish = async () => {
         const res = await $strapi.create<ArticleDto>('articles', articleParams);
         setTimeout(() => {
             publishLoading.value = false
-            navigateTo(`/${res.data.id}`, {replace: true})
+            navigateTo(`/${res.data.slug}`, {replace: true})
         }, 250)
     }
 }
@@ -189,7 +196,7 @@ const onSave = async () => {
     const articleParams = getArticleData()
 
     if (article) {
-        await $strapi.update<ArticleDto>('articles', articleId, articleParams);
+        await $strapi.update<ArticleDto>('articles', article.id, articleParams);
         setTimeout(() => {
             saveLoading.value = false
             router.go(-1)
@@ -199,7 +206,7 @@ const onSave = async () => {
         const res = await $strapi.create<ArticleDto>('articles', articleParams);
         setTimeout(() => {
             saveLoading.value = false
-            navigateTo(`/${res.data.id}`, {replace: true})
+            navigateTo(`/${res.data.slug}`, {replace: true})
         }, 250)
     }
 
@@ -231,11 +238,13 @@ const validatePublishableData = () => {
 
 // Editing existing article
 if (route.params.slug && route.params.slug[0]) {
-    articleId = route.params.slug[0]
+    articleSlug = route.params.slug[0]
     try {
-        const response = await $strapi.findOne<ArticleDto>('articles', articleId)
+        const response = await $strapi.findOne<ArticleDto>('articles', articleSlug)
         article = new Article(response.data)
-        validatePublishableData()
+        if (process.client) {
+            validatePublishableData()
+        }
 
         if (article?.isPublished) {
             dropdownOpts.unshift({

@@ -3,7 +3,7 @@
         <div class="max-w-xl mx-auto relative mt-8 pb-20">
 
             <div class="w-fit ml-auto mr-0 mb-4 flex items-center" v-if="authStore.isLoggedIn">
-                <nuxt-link :to="editLink">
+                <nuxt-link :to="article.editLink">
                     <n-button circle quaternary>
                         <material-symbols:edit class="text-neutral-400" />
                     </n-button>
@@ -40,14 +40,12 @@ await authStore.fetchUser()
 const route = useRoute();
 
 let article: Ref<Article | null> = ref(null);
-let editLink: string;
 
 if (!route.params.slug || !route.params.slug[0]) {
     // await router.push('/')
 } else {
-    const articleId = route.params.slug[0];
-    editLink = `/edit/${articleId}`
-    const response = await $strapi.findOne<ArticleDto>('articles', articleId);
+    const articleSlug = route.params.slug[0];
+    const response = await $strapi.findOne<ArticleDto>('articles', articleSlug);
     article.value = new Article(response.data);
 }
 
