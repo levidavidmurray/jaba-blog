@@ -22,7 +22,6 @@ export default defineNuxtConfig({
             'vueuc',
             '@css-render/vue3-ssr',
             '@juggle/resize-observer',
-            'word-counting'
           ]
         : ['@juggle/resize-observer']
   },
@@ -31,9 +30,6 @@ export default defineNuxtConfig({
   ],
   runtimeConfig: {
     public: {
-      strapi: {
-        baseURL: 'http://localhost:1337'
-      },
       google: {
         clientId: process.env.GOOGLE_CLIENT_ID || '1234',
       }
