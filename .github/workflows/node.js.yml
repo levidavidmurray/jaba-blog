@@ -42,3 +42,6 @@ jobs:
         known_hosts: 'placeholder-so-no-errors'
     - name: Deploy with rsync
       run: rsync -avz ./.output/* ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:~/lolidk.me/web/
+    - name: Restarting pm2
+      run: ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} 'pm2 restart blog-web'
+    
