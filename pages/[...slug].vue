@@ -31,21 +31,32 @@ import { ArticleDto } from '~~/types/api';
 import { Article } from '~~/types/models/article';
 import { Ref } from 'vue';
 import { useAuth } from '~~/store/auth';
-import { NButton } from 'naive-ui'
+import { NButton, useMessage } from 'naive-ui'
+import { StrapiError } from 'strapi-sdk-js'
 
 const authStore = useAuth()
 await authStore.fetchUser()
 
 const route = useRoute();
+const message = useMessage()
 
 let article: Ref<Article | null> = ref(null);
 
 if (!route.params.slug || !route.params.slug[0]) {
     // await router.push('/')
+    await navigateTo('/', { replace: true })
 } else {
     const articleSlug = route.params.slug[0];
-    const response = await $strapi.findOne<ArticleDto>('articles', articleSlug);
-    article.value = new Article(response.data);
+
+    try {
+        const response = await $strapi.findOne<ArticleDto>('articles', articleSlug);
+        article.value = new Article(response.data);
+    }
+    catch (err) {
+        message.error((err as StrapiError).error.message)
+        await navigateTo('/', { replace: true })
+    }
+
 }
 
 </script>

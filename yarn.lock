@@ -3059,7 +3059,7 @@ html-tags@^3.1.0:
   resolved "https://registry.yarnpkg.com/html-tags/-/html-tags-3.2.0.tgz#dbb3518d20b726524e4dd43de397eb0a95726961"
   integrity sha512-vy7ClnArOZwCnqZgvv+ddgHgJiAFXe3Ge9ML5/mBctVJoUoYPCdxVucOywjDARn6CVoh3dRSFdPHy2sX80L0Wg==
 
-html-to-text@^8.1.0, html-to-text@^8.2.1:
+html-to-text@^8.2.1:
   version "8.2.1"
   resolved "https://registry.yarnpkg.com/html-to-text/-/html-to-text-8.2.1.tgz#4a75b8a1b646149bd71c50527adb568990bf459b"
   integrity sha512-aN/3JvAk8qFsWVeE9InWAWueLXrbkoVZy0TkzaGhoRBC2gCFEeRLDDJN3/ijIGHohy6H+SZzUQWN/hcYtaPK8w==
@@ -5795,14 +5795,6 @@ windicss@^3.5.6:
   version "3.5.6"
   resolved "https://registry.yarnpkg.com/windicss/-/windicss-3.5.6.tgz#30a34da76894d952a96c9a1921f2e91e13932183"
   integrity sha512-P1mzPEjgFMZLX0ZqfFht4fhV/FX8DTG7ERG1fBLiWvd34pTLVReS5CVsewKn9PApSgXnVfPWwvq+qUsRwpnwFA==
-
-word-counting@^1.1.4:
-  version "1.1.4"
-  resolved "https://registry.yarnpkg.com/word-counting/-/word-counting-1.1.4.tgz#4d772df20bd86e2e8b00596c8e1ab2f355578ddd"
-  integrity sha512-SsAKEoa6FzQTV7fR27vDOHO9m2f7cnGhppP+e0c6JCn+pDg88kCMVfrt0Qr8XcbbW2o6HIum4yFX8WEnxZ5xLA==
-  dependencies:
-    html-to-text "^8.1.0"
-    word-regex "^0.1.2"
 
 word-regex@^0.1.2:
   version "0.1.2"
