@@ -46,11 +46,32 @@ if (!route.params.slug || !route.params.slug[0]) {
     // await router.push('/')
     await navigateTo('/', { replace: true })
 } else {
-    const articleSlug = route.params.slug[0];
+    const articleSlug = route.params.slug[0]
 
     try {
-        const response = await $strapi.findOne<ArticleDto>('articles', articleSlug);
-        article.value = new Article(response.data);
+        const response = await $strapi.findOne<ArticleDto>('articles', articleSlug)
+        article.value = new Article(response.data)
+
+        let host = ''
+        if (process.server) {
+            host = useRequestHeaders().host
+        } else {
+            host = location.host
+        }
+
+        const twitterImage = `http://${host}/lolidk-twitter-card.png`
+
+        const { title, summary } = article.value
+        useHead({
+            title: `lol_idk | ${title}`,
+            meta: [
+                { name: 'twitter:card', content: 'summary_large_image' },
+                { name: 'twitter:title', content: title },
+                { name: 'twitter:description', content: summary },
+                { name: 'twitter:creator', content: '@lol_idk_blog' },
+                { name: 'twitter:image', content: twitterImage },
+            ]
+        })
     }
     catch (err) {
         message.error((err as StrapiError).error.message)
