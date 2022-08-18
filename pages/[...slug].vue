@@ -33,7 +33,6 @@ import { Ref } from 'vue';
 import { useAuth } from '~~/store/auth';
 import { NButton } from 'naive-ui'
 
-const { $strapi } = useNuxtApp()
 const authStore = useAuth()
 await authStore.fetchUser()
 
