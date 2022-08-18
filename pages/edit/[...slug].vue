@@ -60,6 +60,7 @@ import DeleteIcon from '~icons/material-symbols/delete'
 import UnpublishedIcon from '~icons/material-symbols/unpublished'
 import CalendarIcon from '~icons/material-symbols/calendar-month'
 import { useAuth } from '~~/store/auth';
+import { StrapiResponse } from 'strapi-sdk-js'
 
 const route = useRoute()
 const router = useRouter()
@@ -176,41 +177,31 @@ const onPublish = async () => {
         articleParams.publishedAt = $dayjs(customPublishDate.value).toISOString()
     }
 
-    if (article) {
-        await $strapi.update<ArticleDto>('articles', article.id, articleParams);
-        setTimeout(() => {
-            publishLoading.value = false
-            router.go(-1)
-        }, 250)
-    } else {
-        const res = await $strapi.create<ArticleDto>('articles', articleParams);
-        setTimeout(() => {
-            publishLoading.value = false
-            navigateTo(`/${res.data.slug}`, {replace: true})
-        }, 250)
-    }
+    const res = await upsertArticle(articleParams)
+    setTimeout(() => {
+        publishLoading.value = false
+        navigateTo(`/${res.data.slug}`, {replace: true})
+    }, 250)
 }
 
 const onSave = async () => {
     saveLoading.value = true
     const articleParams = getArticleData()
 
+    const res = await upsertArticle(articleParams)
+    setTimeout(() => {
+        saveLoading.value = false
+        navigateTo(`/${res.data.slug}`, {replace: true})
+    }, 250)
+};
+
+const upsertArticle = async (articleParams: Partial<ArticleDto>): Promise<StrapiResponse<ArticleDto>> => {
     if (article) {
-        await $strapi.update<ArticleDto>('articles', article.id, articleParams);
-        setTimeout(() => {
-            saveLoading.value = false
-            router.go(-1)
-        }, 250)
-    } else {
-        articleParams.publishedAt = null
-        const res = await $strapi.create<ArticleDto>('articles', articleParams);
-        setTimeout(() => {
-            saveLoading.value = false
-            navigateTo(`/${res.data.slug}`, {replace: true})
-        }, 250)
+        return await $strapi.update<ArticleDto>('articles', article.id, articleParams);
     }
 
-};
+    return await $strapi.create<ArticleDto>('articles', articleParams);
+}
 
 const getArticleData = (): Partial<ArticleDto> => {
     const parser = new DOMParser();
