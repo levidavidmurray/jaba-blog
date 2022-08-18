@@ -5,7 +5,7 @@ import IconsResolver from 'unplugin-icons/resolver'
 export default defineNuxtConfig({
   ssr: true,
   meta: {
-    title: 'lol idk | Blog',
+    title: 'lol_idk | Blog',
     link: [
       { rel: 'preconnect', href: 'https://rsms.me' },
       { rel: 'stylesheet', href: 'https://rsms.me/inter/inter.css' },
