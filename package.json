@@ -35,8 +35,8 @@
     "axios": "^0.27.2",
     "dayjs": "^1.11.4",
     "html-to-text": "^8.2.1",
-    "naive-ui": "file:naive-ui-2.32.2-beta.0.tgz",
-    "strapi-sdk-js": "/home/levi/Code/gh/strapi-sdk-js",
+    "naive-ui": "file:packages/naive-ui-2.32.2-beta.0.tgz",
+    "strapi-sdk-js": "file:packages/strapi-sdk-js-v2.1.5.tgz",
     "word-counting": "^1.1.4",
     "word-regex": "^0.1.2"
   }
