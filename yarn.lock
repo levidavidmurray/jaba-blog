@@ -3748,9 +3748,9 @@ mute-stream@0.0.8:
   resolved "https://registry.yarnpkg.com/mute-stream/-/mute-stream-0.0.8.tgz#1630c42b2251ff81e2a283de96a5497ea92e5e0d"
   integrity sha512-nnbWWOkoWyUsTjKrhgD0dcz22mdkSnpYqbEjIm2nhwhuxlSkpywJmBo8h0ZqJdkp73mb90SssHkN4rsRaBAfAA==
 
-"naive-ui@file:packages/naive-ui-2.32.2-beta.0.tgz":
-  version "2.32.2-beta.0"
-  resolved "file:packages/naive-ui-2.32.2-beta.0.tgz#37f24d8c27647a7f45c04515be3b608308d2d72a"
+"naive-ui@file:packages/naive-ui-2.32.2-beta.1.tgz":
+  version "2.32.2-beta.1"
+  resolved "file:packages/naive-ui-2.32.2-beta.1.tgz#f1b7c423dee322a551b4804585d90fd500e8d4ba"
   dependencies:
     "@css-render/plugin-bem" "^0.15.10"
     "@css-render/vue3-ssr" "^0.15.10"

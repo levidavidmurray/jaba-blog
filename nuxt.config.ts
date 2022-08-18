@@ -19,6 +19,7 @@ export default defineNuxtConfig({
       process.env.NODE_ENV === 'production'
         ? [
             'naive-ui',
+            'date-fns',
             'vueuc',
             '@css-render/vue3-ssr',
             '@juggle/resize-observer',
