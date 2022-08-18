@@ -4,6 +4,7 @@
             <SiteHeader />
 
             <div class="p-4 my-0 mx-auto max-w-lg">
+                <!-- Admin Filter -->
                 <div v-if="authStore.isLoggedIn" class="flex justify-between mb-4">
                     <n-select
                         style="width: 128px;"
@@ -22,7 +23,9 @@
                 </div>
 
                 <div v-if="featuredArticle">
+                    <!-- Featured -->
                     <ArticleItem v-if="featuredArticle" :featured="true" :article="featuredArticle" />
+                    <!-- Article List -->
                     <div class="mt-8 flex-col space-y-2">
                         <ArticleItem v-for="article in listedArticles" :article="article" />
                     </div>
@@ -68,6 +71,7 @@ const selectOpts = [
 const filterValue = ref(selectOpts[0].label)
 
 const fetchArticles = async () => {
+    featuredArticle.value = null
     loading.value = true
     try {
         const response = await $strapi.find<ArticleDto[]>('articles', { sort: 'publishedAt:desc' })
@@ -79,6 +83,7 @@ const fetchArticles = async () => {
 }
 
 const fetchDrafts = async () => {
+    featuredArticle.value = null
     loading.value = true
     try {
         const response = await $strapi.find<ArticleDto[]>('articles', { sort: 'updatedAt:desc', publicationState: 'preview', filters: {'publishedAt': {'$null': true}} })
@@ -100,7 +105,11 @@ const dropdownActions = {
     drafts: fetchDrafts
 }
 
+let selectedOpt = selectOpts[0].value
+
 const handleFilter = (value: string) => {
+    if (value === selectedOpt) return
+    selectedOpt = value
     dropdownActions[value]?.()
 }
 

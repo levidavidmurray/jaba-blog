@@ -49,7 +49,9 @@ const { featured, article } = defineProps<{
     article: Article
 }>();
 
-const articleLink = article.isPublished ? article.readLink : article.editLink
+const articleLink = computed(() => {
+    return article.isPublished ? article.readLink : article.editLink
+})
 
 </script>
 
