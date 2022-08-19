@@ -36,6 +36,10 @@
 
     const CustomHeading = Heading.extend({
         onUpdate() {
+            const node = editor.state.selection.$head.parent
+
+            if (node.type.name !== 'heading' || node.attrs.level > 1) return
+
             if (titleCaseUpdate) {
                 titleCaseUpdate = false
                 return
@@ -47,7 +51,6 @@
                 .chain()
                 .focus()
                 .command(({ tr, state, chain }) => {
-                    const node = state.selection.$head.parent
                     tr.insertText(titleCase(node.textContent), 0, node.nodeSize-1)
                     return true
                 })
