@@ -2,7 +2,10 @@
     <div class="py-8 relative">
         <h1 class="text-3xl text-neutral-900 dark:text-neutral-200 font-extrabold text-center">lol_idk</h1>
         <h3 class="text-sm text-slate-400 dark:text-slate-600 mt-1 text-center">¯\_(ツ)_/¯</h3>
-        <div class="absolute right-4 top-10">
+        <div class="absolute right-4 top-10 flex items-center">
+            <a :href="twitterLink" target="_blank" class="mr-4 text-lg hover:text-lightBlue-400 dark:hover:opacity-70">
+                <simple-icons:twitter />
+            </a>
             <n-button v-if="authStore.isLoggedIn" @click="logout">Sign Out</n-button>
         </div>
     </div>
@@ -10,7 +13,9 @@
 
 <script lang="ts" setup>
     import { NButton, useMessage } from 'naive-ui'
-    import { useAuth } from '~~/store/auth';
+    import { useAuth } from '~~/store/auth'
+
+    const twitterLink = $constants.TWITTER_PROFILE
 
     const message = useMessage()
     const logout = () => {

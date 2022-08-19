@@ -84,9 +84,6 @@
         autofocus: true,
     })
 
-    const schema = editor.schema
-    console.log('schema', schema)
-
     const handleLink = () => {
         if (editor.isActive('link')) {
             editor.chain().focus().unsetLink().run()

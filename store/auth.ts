@@ -15,6 +15,7 @@ export const useAuth = defineStore('auth', {
   },
   actions: {
     async fetchUser() {
+      if (!$strapi.getToken()) return
       if (this.user) return
       this.user = await $strapi.fetchUser()
     },

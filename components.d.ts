@@ -13,6 +13,7 @@ declare module 'vue' {
     'MaterialSymbols:linkOff': typeof import('~icons/material-symbols/link-off')['default']
     'Mdi:dotsVertical': typeof import('~icons/mdi/dots-vertical')['default']
     'SimpleIcons:1password': typeof import('~icons/simple-icons/1password')['default']
+    'SimpleIcons:twitter': typeof import('~icons/simple-icons/twitter')['default']
   }
 }
 

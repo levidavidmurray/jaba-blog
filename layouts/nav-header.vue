@@ -6,7 +6,6 @@
             </button>
             <nuxt-link to="/" class="flex items-center">
                 <h1 class="text-xl font-bold ml-6">lol_idk</h1>
-                <h3 class="text-sm text-slate-400 dark:text-slate-500 ml-4">¯\_(ツ)_/¯</h3>
             </nuxt-link>
 
             <div v-if="false" class="absolute top-0 flex w-full h-full justify-center items-center">
