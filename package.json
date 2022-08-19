@@ -7,7 +7,8 @@
     "build": "nuxi build",
     "start": "node .output/server/index.mjs",
     "preview": "nuxi preview",
-    "updateall": "yarn upgrade-interactive --latest"
+    "updateall": "yarn upgrade-interactive --latest",
+    "sitemap": "node ./gen-sitemap.js"
   },
   "devDependencies": {
     "@iconify/json": "^2.1.89",
@@ -37,6 +38,7 @@
     "html-to-text": "^8.2.1",
     "naive-ui": "file:packages/naive-ui-2.32.2-beta.1.tgz",
     "strapi-sdk-js": "file:packages/strapi-sdk-js-v2.1.5.tgz",
-    "word-regex": "^0.1.2"
+    "word-regex": "^0.1.2",
+    "xml-js": "^1.6.11"
   }
 }
