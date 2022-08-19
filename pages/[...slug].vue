@@ -49,7 +49,7 @@ const addMetaTags = () => {
     const twitterImage = `${protocol}://${useHost()}/lolidk-twitter-card.png`
 
     useHead({
-        title: `lol_idk | ${title}`,
+        title: `${title}`,
         meta: [
             { name: 'twitter:card', content: 'summary_large_image' },
             { name: 'twitter:title', content: title },
