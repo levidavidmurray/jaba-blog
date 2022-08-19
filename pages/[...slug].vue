@@ -59,7 +59,9 @@ if (!route.params.slug || !route.params.slug[0]) {
             host = location.host
         }
 
-        const twitterImage = `http://${host}/lolidk-twitter-card.png`
+        let protocol = $isDev ? 'http' : 'https'
+
+        const twitterImage = `${protocol}://${host}/lolidk-twitter-card.png`
 
         const { title, summary } = article.value
         useHead({
