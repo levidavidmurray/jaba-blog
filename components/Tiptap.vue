@@ -22,13 +22,38 @@
     import Typography from '@tiptap/extension-typography'
     import Placeholder from '@tiptap/extension-placeholder'
     import Document from '@tiptap/extension-document'
+    import Heading from '@tiptap/extension-heading'
+    import titleCase from 'ap-style-title-case'
 
     const emit = defineEmits(['update'])
 
+    let titleCaseUpdate = false
     const { article } = defineProps<{ article?: Article }>();
 
     const CustomDocument = Document.extend({
         content: 'heading block*'
+    })
+
+    const CustomHeading = Heading.extend({
+        onUpdate() {
+            if (titleCaseUpdate) {
+                titleCaseUpdate = false
+                return
+            }
+
+            titleCaseUpdate = true
+            const cursorPos = editor.state.selection.to
+            editor
+                .chain()
+                .focus()
+                .command(({ tr, state, chain }) => {
+                    const node = state.selection.$head.parent
+                    tr.insertText(titleCase(node.textContent), 0, node.nodeSize-1)
+                    return true
+                })
+                .setTextSelection(cursorPos)
+                .run()
+        },
     })
 
     const editor = new Editor({
@@ -41,7 +66,8 @@
         content: article ? article.getEditBody() : '',
         extensions: [
             CustomDocument,
-            StarterKit.configure({ document: false }),
+            CustomHeading,
+            StarterKit.configure({ document: false, heading: false }),
             Image,
             Link.configure({ openOnClick: false }),
             Typography,
@@ -54,6 +80,9 @@
         ],
         autofocus: true,
     })
+
+    const schema = editor.schema
+    console.log('schema', schema)
 
     const handleLink = () => {
         if (editor.isActive('link')) {
@@ -82,7 +111,7 @@
         emit('update', editor.getHTML());
     };
 
-    onUpdate();
+    onUpdate()
 
 </script>
 
