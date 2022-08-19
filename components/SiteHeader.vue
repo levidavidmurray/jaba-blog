@@ -1,9 +1,9 @@
 <template>
     <div class="py-8 relative">
-        <h1 class="text-3xl text-neutral-900 dark:text-neutral-200 font-extrabold text-center">lol_idk</h1>
-        <h3 class="text-sm text-slate-400 dark:text-slate-600 mt-1 text-center">¯\_(ツ)_/¯</h3>
+        <h1 class="text-3xl text-neutral-900 dark:text-neutral-200 font-extrabold text-center">{{ SITE_NAME }}</h1>
+        <span class="block text-sm text-slate-400 dark:text-slate-600 mt-1 text-center">{{ SHRUG_ESC }}</span>
         <div class="absolute right-4 top-10 flex items-center">
-            <a :href="twitterLink" target="_blank" class="mr-4 text-lg hover:text-lightBlue-400 dark:hover:opacity-70">
+            <a :href="TWITTER_PROFILE" target="_blank" class="mr-4 text-lg hover:text-lightBlue-400 dark:hover:opacity-70">
                 <simple-icons:twitter />
             </a>
             <n-button v-if="authStore.isLoggedIn" @click="logout">Sign Out</n-button>
@@ -15,7 +15,7 @@
     import { NButton, useMessage } from 'naive-ui'
     import { useAuth } from '~~/store/auth'
 
-    const twitterLink = $constants.TWITTER_PROFILE
+    const { TWITTER_PROFILE, SHRUG_ESC, SITE_NAME } = $constants
 
     const message = useMessage()
     const logout = () => {

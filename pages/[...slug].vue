@@ -51,6 +51,7 @@ const addMetaTags = () => {
     useHead({
         title: `${title}`,
         meta: [
+            { name: 'description', context: summary },
             { name: 'twitter:card', content: 'summary_large_image' },
             { name: 'twitter:title', content: title },
             { name: 'twitter:description', content: summary },

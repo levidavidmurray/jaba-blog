@@ -55,6 +55,12 @@ const featuredArticle = ref<Article | null>(null)
 
 const authStore = useAuth()
 
+useHead({
+    meta: [
+        { name: 'description', context: $constants.SITE_DESCRIPTION },
+    ]
+})
+
 const loading = ref(false)
 
 const selectOpts = [
