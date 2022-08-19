@@ -1,7 +1,6 @@
 <template>
     <nuxt-layout name="nav-header">
         <div class="max-w-xl mx-auto relative mt-8 pb-20">
-
             <div class="w-fit ml-auto mr-0 mb-4 flex items-center" v-if="authStore.isLoggedIn">
                 <nuxt-link :to="article.editLink">
                     <n-button circle quaternary>
@@ -42,6 +41,25 @@ const message = useMessage()
 
 let article: Ref<Article | null> = ref(null);
 
+const addMetaTags = () => {
+    const { title, summary } = article.value
+
+    let protocol = $isDev ? 'http' : 'https'
+
+    const twitterImage = `${protocol}://${useHost()}/lolidk-twitter-card.png`
+
+    useHead({
+        title: `lol_idk | ${title}`,
+        meta: [
+            { name: 'twitter:card', content: 'summary_large_image' },
+            { name: 'twitter:title', content: title },
+            { name: 'twitter:description', content: summary },
+            { name: 'twitter:creator', content: '@lol_idk_blog' },
+            { name: 'twitter:image', content: twitterImage },
+        ]
+    })
+}
+
 if (!route.params.slug || !route.params.slug[0]) {
     // await router.push('/')
     await navigateTo('/', { replace: true })
@@ -51,29 +69,7 @@ if (!route.params.slug || !route.params.slug[0]) {
     try {
         const response = await $strapi.findOne<ArticleDto>('articles', articleSlug)
         article.value = new Article(response.data)
-
-        let host = ''
-        if (process.server) {
-            host = useRequestHeaders().host
-        } else {
-            host = location.host
-        }
-
-        let protocol = $isDev ? 'http' : 'https'
-
-        const twitterImage = `${protocol}://${host}/lolidk-twitter-card.png`
-
-        const { title, summary } = article.value
-        useHead({
-            title: `lol_idk | ${title}`,
-            meta: [
-                { name: 'twitter:card', content: 'summary_large_image' },
-                { name: 'twitter:title', content: title },
-                { name: 'twitter:description', content: summary },
-                { name: 'twitter:creator', content: '@lol_idk_blog' },
-                { name: 'twitter:image', content: twitterImage },
-            ]
-        })
+        addMetaTags()
     }
     catch (err) {
         message.error((err as StrapiError).error.message)

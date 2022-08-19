@@ -9,6 +9,8 @@ export default defineNuxtConfig({
     link: [
       { rel: 'preconnect', href: 'https://rsms.me' },
       { rel: 'stylesheet', href: 'https://rsms.me/inter/inter.css' },
+      { rel: 'icon', type: 'image/svg+xml', href: '/favicon.svg' },
+      { rel: 'icon', type: 'image/png', href: '/favicon.png' },
     ],
     script: [
       { src: 'https://accounts.google.com/gsi/client', async: true, defer: true },
