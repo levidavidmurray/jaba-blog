@@ -6,6 +6,9 @@ import defaultTheme from 'windicss/defaultTheme';
 export default defineConfig({
   darkMode: 'class',
   attributify: true,
+  plugins: [
+    require('windicss/plugin/line-clamp')
+  ],
   theme: {
     fontFamily: {
       'sans': ['Inter', ...defaultTheme.fontFamily.sans],
