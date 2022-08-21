@@ -21,7 +21,7 @@
                 >
                     {{ article.subtitle }}
                 </h5>
-                <p v-if="featured" class="text-sm mt-2 leading-relaxed">{{ article.summary }}</p>
+                <p v-if="featured" class="text-sm mt-2 leading-relaxed">{{ limitedSummary }}</p>
 
                 <!-- Button -->
                 <div class="flex justify-end pr-6">
@@ -51,6 +51,11 @@ const { featured, article } = defineProps<{
 
 const articleLink = computed(() => {
     return article.isPublished ? article.readLink : article.editLink
+})
+
+const limitedSummary = computed(() => {
+    if (article.summary.length > 255) return article.summary.substring(0, 255) + '...'
+    return article.summary
 })
 
 </script>
