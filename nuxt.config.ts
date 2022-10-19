@@ -4,6 +4,7 @@ import IconsResolver from 'unplugin-icons/resolver'
 
 export default defineNuxtConfig({
     ssr: true,
+    debug: true,
     meta: {
         title: process.env.SITE_TITLE,
         link: [
