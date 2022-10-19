@@ -4,10 +4,8 @@ import IconsResolver from 'unplugin-icons/resolver'
 
 export default defineNuxtConfig({
     ssr: true,
-    debug: true,
-    nitro: {
-        timing: true,
-        logLevel: 5,
+    experimental: {
+        writeEarlyHints: false,
     },
     meta: {
         title: process.env.SITE_TITLE,
@@ -72,7 +70,7 @@ export default defineNuxtConfig({
         ]
     ],
     windicss: {
-        analyze: true,
+        analyze: false,
     },
     vite: {
         optimizeDeps: {

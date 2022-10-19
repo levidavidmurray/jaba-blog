@@ -3,7 +3,7 @@
   "description": "A better nuxt3 starter template",
   "private": false,
   "scripts": {
-    "dev": "nuxi dev --port 3088",
+    "dev": "nuxi dev --port 3000",
     "build": "nuxi build",
     "start": "node .output/server/index.mjs",
     "preview": "nuxi preview",
