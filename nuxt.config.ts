@@ -5,6 +5,10 @@ import IconsResolver from 'unplugin-icons/resolver'
 export default defineNuxtConfig({
     ssr: true,
     debug: true,
+    nitro: {
+        timing: true,
+        logLevel: 5,
+    },
     meta: {
         title: process.env.SITE_TITLE,
         link: [
