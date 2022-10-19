@@ -26,15 +26,15 @@ jobs:
         touch .env
         echo VITE_API_URL=https://api.lolidk.me >> .env
         echo VITE_PUBLIC_TEST=0 >> .env
-        echo NUXT_SITE_NAME='lol_idk' >> .env
-        echo NUXT_SITE_TITLE='lol_idk - blog' >> .env
-        echo NUXT_SITE_DESCRIPTION='Some thoughts for the sake of my mental health' >> .env
-        echo NUXT_SITE_SEO_DESCRIPTION='A stream of conciousness to help with a myriad of problems surrounding my mental health.  I just post a bunch of random thoughts.' >> .env
-        echo NUXT_SHRUG='¯\_(ツ)_/¯' >> .env
-        echo NUXT_SHRUG_ESC='¯\\_(ツ)_/¯' >> .env
-        echo NUXT_TWITTER_PROFILE='https://twitter.com/lol_idk_blog' >> .env
-        echo NUXT_TWITTER_HANDLE='@lol_idk_blog' >> .env
-        echo NUXT_TWITTER_CARD_IMAGE='lolidk-twitter-card.png' >> .env
+        echo SITE_NAME='lol_idk' >> .env
+        echo SITE_TITLE='lol_idk - blog' >> .env
+        echo SITE_DESCRIPTION='Some thoughts for the sake of my mental health' >> .env
+        echo SITE_SEO_DESCRIPTION='A stream of conciousness to help with a myriad of problems surrounding my mental health.  I just post a bunch of random thoughts.' >> .env
+        echo SHRUG='¯\_(ツ)_/¯' >> .env
+        echo SHRUG_ESC='¯\\_(ツ)_/¯' >> .env
+        echo TWITTER_PROFILE='https://twitter.com/lol_idk_blog' >> .env
+        echo TWITTER_HANDLE='@lol_idk_blog' >> .env
+        echo TWITTER_CARD_IMAGE='lolidk-twitter-card.png' >> .env
         cat .env
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v3
