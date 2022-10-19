@@ -1,7 +1,7 @@
 <template>
 <div>
     <nuxt-layout>
-        <n-config-provider :theme="isDark ? darkTheme : lightTheme">
+        <n-config-provider :theme="$isDark ? darkTheme : lightTheme">
             <n-message-provider>
                 <n-dialog-provider>
                     <nuxt-page />
@@ -15,11 +15,7 @@
 <script lang="ts" setup>
 import { NMessageProvider, NConfigProvider, NDialogProvider } from 'naive-ui';
 import { darkTheme, lightTheme } from 'naive-ui';
-import { useDark, useToggle } from '@vueuse/core'
 
-const isDark = useDark({
-    storageKey: 'vue-theme-appearance'
-})
-const toggleDark = useToggle(isDark)
+const { $isDark } = useNuxtApp()
 
 </script>

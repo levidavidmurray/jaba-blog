@@ -4,6 +4,7 @@
             <SiteHeader />
 
             <div class="p-4 my-0 mx-auto max-w-lg">
+
                 <!-- Admin Filter -->
                 <div v-if="authStore.isLoggedIn" class="flex justify-between mb-4">
                     <n-select
@@ -57,7 +58,7 @@ const authStore = useAuth()
 
 useHead({
     meta: [
-        { name: 'description', context: $constants.SITE_DESCRIPTION },
+        { name: 'description', context: useConstants().SITE_SEO_DESCRIPTION },
     ]
 })
 

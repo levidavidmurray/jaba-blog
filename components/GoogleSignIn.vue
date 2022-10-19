@@ -1,7 +1,7 @@
 <template>
     <div id="g_id_onload"
         :data-client_id="googleClientId"
-        data-login_uri="http://localhost:3088/"
+        data-login_uri="http://localhost:8080"
         data-auto_prompt="false">
     </div>
     <div class="g_id_signin"

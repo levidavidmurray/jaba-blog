@@ -1,0 +1,1 @@
+export const $isForPublic = Boolean(Number(import.meta.env.VITE_PUBLIC_TEST))
