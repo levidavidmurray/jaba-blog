@@ -112,7 +112,6 @@ export const useArticles = defineStore('article', {
                 if (!article.isLocal) {
                     // public user is editing non-local article
                     hiddenArticleSlugs.value.add(article.slug)
-                    console.log(hiddenArticleSlugs)
                 }
 
                 const newDto: ArticleDto = Object.assign(article.dto, articleParams)

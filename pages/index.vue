@@ -106,7 +106,6 @@ const fetchDrafts = async () => {
 
 const displayArticles = (articleDtos: ArticleDto[]) => {
     const articles = articleDtos.map(dto => new Article(dto))
-    console.log(articles)
     featuredArticle.value = articles[0]
     listedArticles.value = articles.filter(a => a.id !== featuredArticle.value.id)
 }

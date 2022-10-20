@@ -18,10 +18,6 @@
 
     const { TWITTER_PROFILE, SHRUG, SITE_NAME, SITE_DESCRIPTION } = useConstants()
 
-    const isForPublic = $isForPublic
-
-    console.log('$isForPublic', $isForPublic)
-
     const message = useMessage()
     const logout = () => {
         authStore.logout()
