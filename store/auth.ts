@@ -11,7 +11,8 @@ export const useAuth = defineStore('auth', {
         user: ref(null),
     }),
     getters: {
-        isLoggedIn: (state) => state.user !== null
+        isLoggedIn: (state) => state.user !== null,
+        canCreate: (state) => state.user !== null || $isForPublic,
     },
     actions: {
         async fetchUser() {

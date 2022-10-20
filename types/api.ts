@@ -37,10 +37,10 @@ export interface ArticleDto extends StrapiDto {
     subtitle: string
     summary: string
     body: string
-    author?: AuthorDto
-    thumbnail: any
     slug: string
-    points: number
+    author?: AuthorDto
+    thumbnail?: any
+    points?: number
 }
 
 export interface CategoryDto {

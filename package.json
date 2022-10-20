@@ -38,6 +38,7 @@
     "dayjs": "^1.11.4",
     "html-to-text": "^8.2.1",
     "naive-ui": "latest",
+    "slugify": "^1.6.5",
     "strapi-sdk-js": "file:packages/strapi-sdk-js-v2.1.5.tgz",
     "word-regex": "^0.1.2",
     "xml-js": "^1.6.11"
