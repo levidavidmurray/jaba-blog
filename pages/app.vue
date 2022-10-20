@@ -153,7 +153,6 @@ const { data } = await useAsyncData('/api/hello', () => {
 const toggleLocales = () => {
   // change to some real logic
   const locales = availableLocales
-  console.log(locale.value)
   locale.value = locales[(locales.indexOf(locale.value) + 1) % locales.length]
 }
 
