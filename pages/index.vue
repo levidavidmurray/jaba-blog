@@ -6,7 +6,7 @@
             <div class="p-4 my-0 mx-auto max-w-lg">
 
                 <!-- Admin Filter -->
-                <div v-if="authStore.isLoggedIn" class="flex justify-between mb-4">
+                <div v-if="authStore.canCreate" class="flex justify-between mb-4">
                     <n-select
                         style="width: 128px;"
                         :options="selectOpts"
@@ -50,11 +50,14 @@ import { NButton, NSelect, NResult } from 'naive-ui'
 import { ArticleDto } from '@/types/api';
 import { Article } from '@/types/models/article';
 import { useAuth } from '~~/store/auth';
+import { useArticles } from '~~/store/article';
 
 const listedArticles = ref<Article[]>([])
 const featuredArticle = ref<Article | null>(null)
 
 const authStore = useAuth()
+const articleStore = useArticles()
+const isForPublic = $isForPublic
 
 useHead({
     meta: [
@@ -81,8 +84,8 @@ const fetchArticles = async () => {
     featuredArticle.value = null
     loading.value = true
     try {
-        const response = await $strapi.find<ArticleDto[]>('articles', { sort: 'publishedAt:desc' })
-        displayArticles(response.data)
+        await articleStore.fetchPublished()
+        displayArticles(articleStore.published)
     } catch (error) {
         console.error('error', error)
     }
@@ -93,8 +96,8 @@ const fetchDrafts = async () => {
     featuredArticle.value = null
     loading.value = true
     try {
-        const response = await $strapi.find<ArticleDto[]>('articles', { sort: 'updatedAt:desc', publicationState: 'preview', filters: {'publishedAt': {'$null': true}} })
-        displayArticles(response.data)
+        await articleStore.fetchDrafts()
+        displayArticles(articleStore.drafts)
     } catch (error) {
         console.error('error', error)
     }
@@ -103,6 +106,7 @@ const fetchDrafts = async () => {
 
 const displayArticles = (articleDtos: ArticleDto[]) => {
     const articles = articleDtos.map(dto => new Article(dto))
+    console.log(articles)
     featuredArticle.value = articles[0]
     listedArticles.value = articles.filter(a => a.id !== featuredArticle.value.id)
 }

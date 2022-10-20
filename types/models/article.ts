@@ -90,6 +90,11 @@ export class Article {
         return Boolean(this.dto.publishedAt)
     }
 
+    // Articles saved to localStorage have an id of -1
+    get isLocal(): boolean {
+        return this.id === -1
+    }
+
     getEditBody(): string {
         const titleEl = document.createElement('h1')
         titleEl.innerText = this.title

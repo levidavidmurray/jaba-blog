@@ -1,7 +1,7 @@
 <template>
     <nuxt-layout name="nav-header">
         <div class="max-w-xl mx-auto relative mt-8 pb-20">
-            <div class="w-fit ml-auto mr-0 mb-4 flex items-center" v-if="authStore.isLoggedIn">
+            <div class="w-fit ml-auto mr-0 mb-4 flex items-center" v-if="authStore.canCreate">
                 <nuxt-link :to="article.editLink">
                     <n-button circle quaternary>
                         <material-symbols:edit class="text-neutral-400" />
@@ -26,13 +26,14 @@
 </template>
 
 <script lang="ts" setup>
-import { ArticleDto } from '~~/types/api';
 import { Article } from '~~/types/models/article';
 import { Ref } from 'vue';
 import { useAuth } from '~~/store/auth';
 import { NButton, useMessage } from 'naive-ui'
 import { StrapiError } from 'strapi-sdk-js'
+import { useArticles } from '~~/store/article';
 
+const articleStore = useArticles()
 const authStore = useAuth()
 await authStore.fetchUser()
 
@@ -70,8 +71,8 @@ if (!route.params.slug || !route.params.slug[0]) {
     const articleSlug = route.params.slug[0]
 
     try {
-        const response = await $strapi.findOne<ArticleDto>('articles', articleSlug)
-        article.value = new Article(response.data)
+        const dto = await articleStore.findOne(articleSlug)
+        article.value = new Article(dto)
         addMetaTags()
     }
     catch (err) {

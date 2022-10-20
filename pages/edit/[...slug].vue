@@ -61,15 +61,16 @@ import UnpublishedIcon from '~icons/material-symbols/unpublished'
 import CalendarIcon from '~icons/material-symbols/calendar-month'
 import { useAuth } from '~~/store/auth';
 import { StrapiResponse } from 'strapi-sdk-js'
+import { useArticles } from '~~/store/article';
 
 const route = useRoute()
-const router = useRouter()
 const authStore = useAuth()
+const articleStore = useArticles()
 const message = useMessage()
 const dialog = useDialog()
 
 await authStore.fetchUser()
-if (process.client && !authStore.isLoggedIn) {
+if (process.client && !authStore.canCreate) {
     await navigateTo('/', { replace: true })
 }
 
@@ -126,7 +127,7 @@ const promptDeleteConfirmation = () => {
         negativeText: 'Cancel',
         onPositiveClick: async () => {
             d.loading = true
-            await $strapi.delete('articles', article.id)
+            await articleStore.delete(article)
             await new Promise(res => setTimeout(res, 1000))
             message.success('Article Deleted')
             await new Promise(res => setTimeout(res, 500))
@@ -145,7 +146,7 @@ const promptUnpublishConfirmation = () => {
         negativeText: 'Cancel',
         onPositiveClick: async () => {
             d.loading = true
-            await $strapi.update('articles', article.id, { publishedAt: null })
+            await articleStore.update(article, { publishedAt: null })
             await new Promise(res => setTimeout(res, 1000))
             message.success('Article Unpublished')
             await new Promise(res => setTimeout(res, 500))
@@ -201,10 +202,10 @@ const onSave = async () => {
 
 const upsertArticle = async (articleParams: Partial<ArticleDto>): Promise<StrapiResponse<ArticleDto>> => {
     if (article) {
-        return await $strapi.update<ArticleDto>('articles', article.id, articleParams);
+        return await articleStore.update(article, articleParams)
     }
 
-    return await $strapi.create<ArticleDto>('articles', articleParams);
+    return await articleStore.create(articleParams)
 }
 
 const getArticleData = (): Partial<ArticleDto> => {
@@ -234,43 +235,43 @@ const validatePublishableData = () => {
 // Editing existing article
 if (route.params.slug && route.params.slug[0]) {
     articleSlug = route.params.slug[0]
-    try {
-        const response = await $strapi.findOne<ArticleDto>('articles', articleSlug)
-        article = new Article(response.data)
-        if (process.client) {
-            validatePublishableData()
-        }
+    const articleDto = await articleStore.findOne(articleSlug)
 
-        if (article?.isPublished) {
-            dropdownOpts.unshift({
-                label: 'Unpublish',
-                key: 'unpublish',
-                icon: renderIcon(UnpublishedIcon),
-                props: {
-                    style: {
-                        '--n-option-text-color': 'var(--wc-neutral-500)',
-                        '--n-prefix-color': 'var(--wc-neutral-500)',
-                    }
-                }
-            })
-        } else {
-            dropdownOpts.unshift({
-                label: 'Set Published Date',
-                key: 'publishedDate',
-                icon: renderIcon(CalendarIcon),
-                props: {
-                    style: {
-                        '--n-option-text-color': 'var(--wc-neutral-500)',
-                        '--n-prefix-color': 'var(--wc-neutral-500)',
-                    }
-                }
-            })
-        }
-    } catch (err) {
-        console.error(err)
+    if (!articleDto) {
         await navigateTo('/edit')
     }
 
+    article = new Article(articleDto)
+
+    if (process.client) {
+        validatePublishableData()
+    }
+
+    if (article?.isPublished) {
+        dropdownOpts.unshift({
+            label: 'Unpublish',
+            key: 'unpublish',
+            icon: renderIcon(UnpublishedIcon),
+            props: {
+                style: {
+                    '--n-option-text-color': 'var(--wc-neutral-500)',
+                    '--n-prefix-color': 'var(--wc-neutral-500)',
+                }
+            }
+        })
+    } else {
+        dropdownOpts.unshift({
+            label: 'Set Published Date',
+            key: 'publishedDate',
+            icon: renderIcon(CalendarIcon),
+            props: {
+                style: {
+                    '--n-option-text-color': 'var(--wc-neutral-500)',
+                    '--n-prefix-color': 'var(--wc-neutral-500)',
+                }
+            }
+        })
+    }
 } 
 
 if (process.client) {
