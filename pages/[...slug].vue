@@ -41,20 +41,23 @@ const message = useMessage()
 
 let article: Ref<Article | null> = ref(null);
 
+const { TWITTER_HANDLE, TWITTER_CARD_IMAGE } = useConstants()
+
 const addMetaTags = () => {
     const { title, summary } = article.value
 
     let protocol = $isDev ? 'http' : 'https'
 
-    const twitterImage = `${protocol}://${useHost()}/lolidk-twitter-card.png`
+    const twitterImage = `${protocol}://${useHost()}/${TWITTER_CARD_IMAGE}`
 
     useHead({
         title: `${title}`,
         meta: [
+            { name: 'description', context: summary },
             { name: 'twitter:card', content: 'summary_large_image' },
             { name: 'twitter:title', content: title },
             { name: 'twitter:description', content: summary },
-            { name: 'twitter:creator', content: '@lol_idk_blog' },
+            { name: 'twitter:creator', content: TWITTER_HANDLE },
             { name: 'twitter:image', content: twitterImage },
         ]
     })

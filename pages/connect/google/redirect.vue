@@ -1,6 +1,5 @@
 <template>
     <div>
-        Google Callback!
     </div>
 </template>
 

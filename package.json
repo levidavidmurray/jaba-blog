@@ -3,11 +3,12 @@
   "description": "A better nuxt3 starter template",
   "private": false,
   "scripts": {
-    "dev": "nuxi dev --port 3088",
+    "dev": "nuxi dev --port 3000",
     "build": "nuxi build",
     "start": "node .output/server/index.mjs",
     "preview": "nuxi preview",
-    "updateall": "yarn upgrade-interactive --latest"
+    "updateall": "yarn upgrade-interactive --latest",
+    "sitemap": "node ./gen-sitemap.js"
   },
   "devDependencies": {
     "@iconify/json": "^2.1.89",
@@ -18,7 +19,7 @@
     "@tiptap/extension-link": "^2.0.0-beta.43",
     "@tiptap/extension-typography": "^2.0.0-beta.22",
     "@vueuse/nuxt": "^9.1.0",
-    "nuxt": "npm:nuxt3@3.0.0-rc.8-27679173.c688e18",
+    "nuxt": "npm:nuxt3@3.0.0-rc.13-27768654.09e5534",
     "nuxt-windicss": "latest",
     "sass": "^1.54.4",
     "sass-loader": "10",
@@ -32,11 +33,13 @@
     "@tiptap/extension-placeholder": "^2.0.0-beta.53",
     "@tiptap/starter-kit": "^2.0.0-beta.191",
     "@tiptap/vue-3": "^2.0.0-beta.96",
+    "ap-style-title-case": "^1.1.2",
     "axios": "^0.27.2",
     "dayjs": "^1.11.4",
     "html-to-text": "^8.2.1",
-    "naive-ui": "file:packages/naive-ui-2.32.2-beta.1.tgz",
+    "naive-ui": "latest",
     "strapi-sdk-js": "file:packages/strapi-sdk-js-v2.1.5.tgz",
-    "word-regex": "^0.1.2"
+    "word-regex": "^0.1.2",
+    "xml-js": "^1.6.11"
   }
 }

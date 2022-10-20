@@ -21,7 +21,7 @@
                 >
                     {{ article.subtitle }}
                 </h5>
-                <p v-if="featured" class="text-sm mt-2 leading-relaxed">{{ article.summary }}</p>
+                <p v-if="featured" class="text-sm mt-2 leading-relaxed line-clamp-4">{{ article.summary }}</p>
 
                 <!-- Button -->
                 <div class="flex justify-end pr-6">

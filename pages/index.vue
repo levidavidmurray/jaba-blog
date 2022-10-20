@@ -4,6 +4,7 @@
             <SiteHeader />
 
             <div class="p-4 my-0 mx-auto max-w-lg">
+
                 <!-- Admin Filter -->
                 <div v-if="authStore.isLoggedIn" class="flex justify-between mb-4">
                     <n-select
@@ -54,6 +55,12 @@ const listedArticles = ref<Article[]>([])
 const featuredArticle = ref<Article | null>(null)
 
 const authStore = useAuth()
+
+useHead({
+    meta: [
+        { name: 'description', context: useConstants().SITE_SEO_DESCRIPTION },
+    ]
+})
 
 const loading = ref(false)
 

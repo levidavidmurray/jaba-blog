@@ -188,6 +188,10 @@ const onSave = async () => {
     saveLoading.value = true
     const articleParams = getArticleData()
 
+    if (!article) {
+        articleParams.publishedAt = null
+    }
+
     const res = await upsertArticle(articleParams)
     setTimeout(() => {
         saveLoading.value = false
