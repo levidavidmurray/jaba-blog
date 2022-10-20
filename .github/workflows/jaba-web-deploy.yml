@@ -1,0 +1,53 @@
+# This workflow will do a clean installation of node dependencies, cache/restore them, build the source code and run tests across different versions of node
+# For more information see: https://help.github.com/actions/language-and-framework-guides/using-nodejs-with-github-actions
+
+name: Node.js CI
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [16.x]
+        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Create .env file
+      run: |
+        touch .env
+        echo VITE_API_URL=https://api.jaba.levimurray.dev >> .env
+        echo VITE_PUBLIC_TEST=1 >> .env
+        echo SITE_NAME='JABA Blog' >> .env
+        echo SITE_TITLE='JABA Blog' >> .env
+        echo SITE_DESCRIPTION='Just Another Blog App' >> .env
+        echo SITE_SEO_DESCRIPTION='An example blog built using Nuxt 3 & Strapi' >> .env
+        echo SHRUG='¯\_(ツ)_/¯' >> .env
+        echo SHRUG_ESC='¯\\_(ツ)_/¯' >> .env
+        cat .env
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v3
+      with:
+        node-version: ${{ matrix.node-version }}
+        cache: 'yarn'
+    - run: yarn install
+    - run: NODE_ENV=production yarn build
+    - name: Adding Known Hosts
+      run: mkdir ~/.ssh && ssh-keyscan -H ${{ secrets.SSH_HOST }} >> ~/.ssh/known_hosts
+    - name: Install SSH Key
+      uses: shimataro/ssh-key-action@v2
+      with:
+        key: ${{ secrets.SSH_PRIVATE_KEY }}
+        known_hosts: 'placeholder-so-no-errors'
+    - name: Deploy with rsync
+      run: rsync -avz ./.output/* ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:~/jaba/web/
+    - name: Restarting pm2
+      run: ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} 'pm2 restart jaba-web'
